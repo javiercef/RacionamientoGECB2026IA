@@ -6,7 +6,7 @@
   <title>Racionamiento - Cas Subof GECB</title>
   
   <!-- Tailwind CSS -->
-  <link rel="stylesheet" href="./src/main.css">
+  <link rel="stylesheet" href="/src/main.css">
   
   <!-- Alpine.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -26,18 +26,18 @@
       background-attachment: fixed;
     }
     .military-gradient {
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.85) 100%);
     }
   </style>
 </head>
 <body class="h-full flex flex-col antialiased text-slate-100 bg-slate-950 bg-custom-image relative" x-data="appData()" x-init="init()">
 
-  <!-- Dark Overlay for Readability -->
-  <div class="absolute inset-0 bg-slate-950/85 pointer-events-none z-0"></div>
+  <!-- Dark Overlay for Readability (Increased transparency) -->
+  <div class="absolute inset-0 bg-slate-950/75 pointer-events-none z-0"></div>
 
   <!-- ================= PANTALLA DE LOGIN ================= -->
-  <div x-show="!isLoggedIn" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-sm p-4 relative z-20" x-cloak>
-    <div class="bg-slate-900/95 backdrop-blur-md rounded-2xl max-w-md w-full p-8 shadow-2xl border border-slate-700/80 space-y-6">
+  <div x-show="!isLoggedIn" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 relative z-20" x-cloak>
+    <div class="bg-slate-900/80 backdrop-blur-md rounded-2xl max-w-md w-full p-8 shadow-2xl border border-slate-700/80 space-y-6">
       
       <div class="text-center space-y-2">
         <div class="w-16 h-16 mx-auto rounded-full bg-slate-950 border-2 border-amber-500 flex items-center justify-center shadow-inner overflow-hidden">
@@ -50,11 +50,11 @@
       <form @submit.prevent="handleLogin" class="space-y-4">
         <div>
           <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">DNI</label>
-          <input type="text" x-model="loginDni" required placeholder="Ej: 32849488" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:ring-2 focus:ring-amber-500 text-sm">
+          <input type="text" x-model="loginDni" required placeholder="Ej: 32849488" class="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:ring-2 focus:ring-amber-500 text-sm">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Contraseña</label>
-          <input type="password" x-model="loginPassword" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:ring-2 focus:ring-amber-500 text-sm">
+          <input type="password" x-model="loginPassword" required placeholder="••••••••" class="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:ring-2 focus:ring-amber-500 text-sm">
         </div>
 
         <template x-if="loginError">
@@ -85,7 +85,7 @@
       </div>
 
       <!-- CENTRO: Identidad de Usuario Autenticado -->
-      <div class="bg-slate-900/90 backdrop-blur-sm px-5 py-2 rounded-xl border border-slate-700 text-center flex items-center gap-3" x-show="currentUser">
+      <div class="bg-slate-900/75 backdrop-blur-md px-5 py-2 rounded-xl border border-slate-700 text-center flex items-center gap-3" x-show="currentUser">
         <div class="w-9 h-9 rounded-full bg-amber-600 text-slate-950 font-bold flex items-center justify-center text-sm shadow">
           <span x-text="(currentUser?.nombre || '').charAt(0) + (currentUser?.apellido || '').charAt(0)"></span>
         </div>
@@ -117,12 +117,12 @@
   </header>
 
   <!-- NAVIGATION TABS -->
-  <nav class="bg-slate-900/90 backdrop-blur-md text-slate-200 shadow border-b border-slate-800 relative z-10" x-show="isLoggedIn">
+  <nav class="bg-slate-900/75 backdrop-blur-md text-slate-200 shadow border-b border-slate-800 relative z-10" x-show="isLoggedIn">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-2 py-2">
       <div class="flex items-center space-x-1 sm:space-x-3 overflow-x-auto">
         <!-- Tab Comensal -->
         <button @click="activeTab = 'comensal'" 
-                :class="activeTab === 'comensal' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800 text-slate-300'"
+                :class="activeTab === 'comensal' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800/75 text-slate-300'"
                 class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
           Mi Racionamiento (Comensal)
@@ -131,7 +131,7 @@
         <!-- Tab Admin Raciones -->
         <button @click="activeTab = 'admin_raciones'" 
                 x-show="currentUser?.rol === 'Admin_Raciones' || currentUser?.rol === 'Super_Admin'"
-                :class="activeTab === 'admin_raciones' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800 text-slate-300'"
+                :class="activeTab === 'admin_raciones' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800/75 text-slate-300'"
                 class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
           Planilla Diaria (Admin Raciones)
@@ -140,7 +140,7 @@
         <!-- Tab Admin Tesorero -->
         <button @click="activeTab = 'admin_tesorero'" 
                 x-show="currentUser?.rol === 'Admin_Tesorero' || currentUser?.rol === 'Super_Admin'"
-                :class="activeTab === 'admin_tesorero' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800 text-slate-300'"
+                :class="activeTab === 'admin_tesorero' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800/75 text-slate-300'"
                 class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           Extracto Mensual & Descuentos (Tesorero)
@@ -149,7 +149,7 @@
         <!-- Tab Gestión de Personal (SOLO SUPER ADMINISTRADOR) -->
         <button @click="activeTab = 'personal'" 
                 x-show="currentUser?.rol === 'Super_Admin'"
-                :class="activeTab === 'personal' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800 text-slate-300'"
+                :class="activeTab === 'personal' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800/75 text-slate-300'"
                 class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
           Nómina & Roles (Super Administrador)
@@ -165,17 +165,17 @@
     <div x-show="activeTab === 'comensal'" class="space-y-6">
       
       <!-- Panel informativo superior -->
-      <div class="bg-slate-900/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="bg-slate-900/75 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
           <h2 class="text-xl font-bold text-slate-100 font-heading">Planificación Mensual de Raciones</h2>
           <p class="text-sm text-slate-400 mt-1">Haga clic en cualquier día del calendario para seleccionar <strong class="text-slate-200">Almuerzo</strong>, <strong class="text-slate-200">Cena</strong> o <strong class="text-slate-200">Ambos</strong>. Cierre diario: 10:00 AM.</p>
         </div>
         <div class="flex items-center gap-3">
-          <div class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-center">
+          <div class="bg-slate-800/75 border border-slate-700 rounded-xl px-4 py-2 text-center">
             <span class="block text-xs text-amber-400 font-semibold uppercase">Total Raciones Mes</span>
             <span class="text-2xl font-extrabold text-amber-300" x-text="getUserTotalRations(currentUser?.dni)">0</span>
           </div>
-          <div class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-center">
+          <div class="bg-slate-800/75 border border-slate-700 rounded-xl px-4 py-2 text-center">
             <span class="block text-xs text-emerald-400 font-semibold uppercase">Costo Estimado</span>
             <span class="text-2xl font-extrabold text-emerald-300" x-text="'$' + (getUserTotalRations(currentUser?.dni) * rationCost).toLocaleString()">$0</span>
           </div>
@@ -183,7 +183,7 @@
       </div>
 
       <!-- Alerta de Cierre 10:00 AM -->
-      <div class="bg-amber-950/60 backdrop-blur-md border-l-4 border-amber-500 p-4 rounded-xl text-xs text-amber-200 flex items-center justify-between shadow-sm">
+      <div class="bg-amber-950/50 backdrop-blur-md border-l-4 border-amber-500 p-4 rounded-xl text-xs text-amber-200 flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-2">
           <svg class="w-5 h-5 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
           <span><strong>Normativa del Casino de Suboficiales:</strong> El día en curso (<span x-text="currentSystemDay"></span>) solo admite cambios hasta las <strong class="underline">10:00 AM</strong>. <span x-show="isTodayLocked()" class="text-red-400 font-bold ml-1">(Bloqueado para hoy por horario de cierre superado)</span></span>
@@ -191,8 +191,8 @@
       </div>
 
       <!-- CALENDARIO NORMAL (GRID DE MES) -->
-      <div class="bg-slate-900/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
-        <div class="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
+      <div class="bg-slate-900/75 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
+        <div class="p-4 bg-slate-800/75 border-b border-slate-700 flex justify-between items-center">
           <h3 class="font-bold text-slate-100 text-lg flex items-center gap-2">
             <span>Calendario de Racionamiento - <span x-text="currentMonthName + ' ' + currentYear"></span></span>
           </h3>
@@ -202,23 +202,23 @@
         <div class="p-6">
           <!-- Cabecera de Días de la Semana -->
           <div class="grid grid-cols-7 gap-2 mb-3 text-center">
-            <div class="text-xs font-bold text-amber-400 uppercase py-2 bg-slate-800/50 rounded-lg">Dom</div>
-            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/50 rounded-lg">Lun</div>
-            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/50 rounded-lg">Mar</div>
-            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/50 rounded-lg">Mié</div>
-            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/50 rounded-lg">Jue</div>
-            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/50 rounded-lg">Vie</div>
-            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/50 rounded-lg">Sáb</div>
+            <div class="text-xs font-bold text-amber-400 uppercase py-2 bg-slate-800/60 rounded-lg">Dom</div>
+            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/60 rounded-lg">Lun</div>
+            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/60 rounded-lg">Mar</div>
+            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/60 rounded-lg">Mié</div>
+            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/60 rounded-lg">Jue</div>
+            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/60 rounded-lg">Vie</div>
+            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/60 rounded-lg">Sáb</div>
           </div>
 
-          <!-- Días del Mes (Grid 7 columnas) -->
+          <!-- Días del Mes (Grid 7 columnas - Increased transparency) -->
           <div class="grid grid-cols-7 gap-2">
             <template x-for="day in getDaysInCurrentMonth()" :key="day">
               <div @click="openDayModal(day)" 
                    class="min-h-[100px] rounded-xl p-3 border transition cursor-pointer flex flex-col justify-between relative group"
                    :class="{
-                     'bg-slate-800/95 border-amber-500 ring-2 ring-amber-500/30': day === currentSystemDay,
-                     'bg-slate-800/60 hover:bg-slate-800/90 border-slate-700 hover:border-slate-600': day !== currentSystemDay
+                     'bg-slate-800/75 border-amber-500 ring-2 ring-amber-500/30': day === currentSystemDay,
+                     'bg-slate-800/45 hover:bg-slate-800/75 border-slate-700 hover:border-slate-600': day !== currentSystemDay
                    }">
                 
                 <div class="flex justify-between items-start">
@@ -234,9 +234,9 @@
                   <template x-if="getDayRationType(currentUser?.dni, day) !== 'ninguno'">
                     <span class="inline-block px-2 py-1 text-[11px] rounded-lg font-bold uppercase shadow"
                           :class="{
-                            'bg-blue-900/90 text-blue-200 border border-blue-700': getDayRationType(currentUser?.dni, day) === 'almuerzo',
-                            'bg-indigo-900/90 text-indigo-200 border border-indigo-700': getDayRationType(currentUser?.dni, day) === 'cena',
-                            'bg-emerald-900/90 text-emerald-200 border border-emerald-700': getDayRationType(currentUser?.dni, day) === 'ambos'
+                            'bg-blue-900/80 text-blue-200 border border-blue-700': getDayRationType(currentUser?.dni, day) === 'almuerzo',
+                            'bg-indigo-900/80 text-indigo-200 border border-indigo-700': getDayRationType(currentUser?.dni, day) === 'cena',
+                            'bg-emerald-900/80 text-emerald-200 border border-emerald-700': getDayRationType(currentUser?.dni, day) === 'ambos'
                           }"
                           x-text="getDayRationType(currentUser?.dni, day)"></span>
                   </template>
@@ -255,7 +255,7 @@
 
     <!-- ================= MODAL: SELECCIONAR / EDITAR RACIÓN DÍA ================= -->
     <div x-show="showDayModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4" x-cloak>
-      <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-700 space-y-5">
+      <div class="bg-slate-900/95 backdrop-blur-md rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-700 space-y-5">
         <div class="flex justify-between items-center border-b border-slate-800 pb-3">
           <div>
             <h3 class="text-lg font-bold text-slate-100 font-heading">Gestionar Ración</h3>
@@ -269,7 +269,7 @@
 
           <div class="space-y-2">
             <!-- Almuerzo -->
-            <label class="flex items-center justify-between p-3 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 cursor-pointer transition">
+            <label class="flex items-center justify-between p-3 rounded-xl bg-slate-800/80 hover:bg-slate-750 border border-slate-700 cursor-pointer transition">
               <div class="flex items-center gap-3">
                 <input type="radio" name="rationChoice" value="almuerzo" x-model="modalSelectedType" class="w-4 h-4 text-amber-600 focus:ring-amber-500">
                 <span class="text-sm font-semibold text-slate-200">Almuerzo</span>
@@ -278,7 +278,7 @@
             </label>
 
             <!-- Cena -->
-            <label class="flex items-center justify-between p-3 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 cursor-pointer transition">
+            <label class="flex items-center justify-between p-3 rounded-xl bg-slate-800/80 hover:bg-slate-750 border border-slate-700 cursor-pointer transition">
               <div class="flex items-center gap-3">
                 <input type="radio" name="rationChoice" value="cena" x-model="modalSelectedType" class="w-4 h-4 text-amber-600 focus:ring-amber-500">
                 <span class="text-sm font-semibold text-slate-200">Cena</span>
@@ -287,7 +287,7 @@
             </label>
 
             <!-- Ambos -->
-            <label class="flex items-center justify-between p-3 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 cursor-pointer transition">
+            <label class="flex items-center justify-between p-3 rounded-xl bg-slate-800/80 hover:bg-slate-750 border border-slate-700 cursor-pointer transition">
               <div class="flex items-center gap-3">
                 <input type="radio" name="rationChoice" value="ambos" x-model="modalSelectedType" class="w-4 h-4 text-amber-600 focus:ring-amber-500">
                 <span class="text-sm font-semibold text-slate-200">Ambos (Almuerzo y Cena)</span>
@@ -296,7 +296,7 @@
             </label>
 
             <!-- Sin Ración / Cancelar -->
-            <label class="flex items-center justify-between p-3 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 cursor-pointer transition">
+            <label class="flex items-center justify-between p-3 rounded-xl bg-slate-800/80 hover:bg-slate-750 border border-slate-700 cursor-pointer transition">
               <div class="flex items-center gap-3">
                 <input type="radio" name="rationChoice" value="ninguno" x-model="modalSelectedType" class="w-4 h-4 text-amber-600 focus:ring-amber-500">
                 <span class="text-sm font-semibold text-red-300">Sin Ración (Cancelar / Deseleccionar)</span>
@@ -316,7 +316,7 @@
     <!-- ================= 2. VISTA ADMIN RACIONES (PLANILLA DEL DÍA) ================= -->
     <div x-show="activeTab === 'admin_raciones'" class="space-y-6">
       
-      <div class="bg-slate-900/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="bg-slate-900/75 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
           <h2 class="text-xl font-bold text-slate-100 font-heading">Planilla del Día (Admin Raciones)</h2>
           <p class="text-sm text-slate-400 mt-1">Resumen cuantitativo y listado nominal de raciones de rancho para el día seleccionado.</p>
@@ -333,7 +333,7 @@
 
       <!-- Resumen Cuantitativo -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-blue-950/90 backdrop-blur-md border border-blue-800 text-white rounded-2xl p-6 shadow-xl flex items-center justify-between">
+        <div class="bg-blue-950/75 backdrop-blur-md border border-blue-800 text-white rounded-2xl p-6 shadow-xl flex items-center justify-between">
           <div>
             <span class="text-xs uppercase tracking-wider text-blue-300 font-semibold">Total Almuerzos del Día</span>
             <div class="text-4xl font-extrabold mt-1 text-blue-100" x-text="getDailyCount(selectedDay, 'almuerzo')">0</div>
@@ -344,7 +344,7 @@
           </div>
         </div>
 
-        <div class="bg-indigo-950/90 backdrop-blur-md border border-indigo-800 text-white rounded-2xl p-6 shadow-xl flex items-center justify-between">
+        <div class="bg-indigo-950/75 backdrop-blur-md border border-indigo-800 text-white rounded-2xl p-6 shadow-xl flex items-center justify-between">
           <div>
             <span class="text-xs uppercase tracking-wider text-indigo-300 font-semibold">Total Cenas del Día</span>
             <div class="text-4xl font-extrabold mt-1 text-indigo-100" x-text="getDailyCount(selectedDay, 'cena')">0</div>
@@ -357,7 +357,7 @@
       </div>
 
       <!-- Listado Nominal Detallado (Listo para imprimir/exportar) -->
-      <div class="bg-slate-900/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
+      <div class="bg-slate-900/75 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
         <div class="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
           <h3 class="font-bold text-slate-100">Listado Nominal - Día <span x-text="selectedDay + ' de ' + currentMonthName"></span></h3>
           <button onclick="window.print()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs px-3 py-2 rounded-lg transition flex items-center gap-1.5 shadow">
@@ -400,7 +400,7 @@
     <!-- ================= 3. VISTA ADMIN TESORERO (EXTRACTO MENSUAL Y DESCUENTOS) ================= -->
     <div x-show="activeTab === 'admin_tesorero'" class="space-y-6">
       
-      <div class="bg-slate-900/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="bg-slate-900/75 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
           <h2 class="text-xl font-bold text-slate-100 font-heading">Extracto Mensual y Liquidación de Descuentos</h2>
           <p class="text-sm text-slate-400 mt-1">Control contable mensual, cálculo de raciones y montos a descontar por comensal.</p>
@@ -429,26 +429,26 @@
 
       <!-- Resumen Consolidado -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="bg-slate-900/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800">
+        <div class="bg-slate-900/75 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800">
           <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Total Almuerzos</span>
           <div class="text-3xl font-extrabold text-blue-400 mt-1" x-text="getMonthlyMealTotalAll('almuerzo')">0</div>
         </div>
-        <div class="bg-slate-900/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800">
+        <div class="bg-slate-900/75 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800">
           <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Total Cenas</span>
           <div class="text-3xl font-extrabold text-indigo-400 mt-1" x-text="getMonthlyMealTotalAll('cena')">0</div>
         </div>
-        <div class="bg-slate-900/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800">
+        <div class="bg-slate-900/75 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800">
           <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Total Raciones Consumidas</span>
           <div class="text-3xl font-extrabold text-slate-100 mt-1" x-text="getTotalRationsAll()">0</div>
         </div>
-        <div class="bg-slate-900/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800">
+        <div class="bg-slate-900/75 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800">
           <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Monto Total Descuentos</span>
           <div class="text-3xl font-extrabold text-emerald-400 mt-1" x-text="'$' + (getTotalRationsAll() * rationCost).toLocaleString()">$0</div>
         </div>
       </div>
 
       <!-- EXTRACTO GENERAL (CONSOLIDADO MENSUAL) TABLA -->
-      <div class="bg-slate-900/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
+      <div class="bg-slate-900/75 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
         <div class="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
           <h3 class="font-bold text-slate-100">Extracto General Consolidado - <span x-text="selectedMonthName + ' ' + selectedYearInput"></span></h3>
           <button onclick="window.print()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs px-3 py-2 rounded-lg transition flex items-center gap-1.5 shadow">
@@ -496,7 +496,7 @@
     <!-- ================= 4. GESTIÓN DE PERSONAL & ROLES (SOLO SUPER ADMINISTRADOR) ================= -->
     <div x-show="activeTab === 'personal'" class="space-y-6" x-cloak>
       
-      <div class="bg-slate-900/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="bg-slate-900/75 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
           <h2 class="text-xl font-bold text-slate-100 font-heading">Nómina del Personal y Asignación de Roles</h2>
           <p class="text-sm text-slate-400 mt-1">Importe socios desde Excel/CSV o asigne roles periódicos de Administración y Tesorería.</p>
@@ -513,10 +513,10 @@
         </div>
       </div>
 
-      <!-- Importación Archivo Excel / CSV -->
-      <div class="bg-slate-900/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 space-y-4">
-        <h3 class="font-bold text-slate-100 text-base">Importar Nómina desde Archivo (Excel / CSV)</h3>
-        <p class="text-xs text-slate-400">Seleccione un archivo CSV o Excel con columnas: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Grado, Nombre, Apellido, DNI, Password, Rol</code> (<a href="/nomina-socios-template.csv" download class="text-amber-400 underline font-semibold ml-2">Descargar Plantilla CSV</a>)</p>
+      <!-- Importación Archivo Excel / CSV (Reemplaza la nómina) -->
+      <div class="bg-slate-900/75 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 space-y-4">
+        <h3 class="font-bold text-slate-100 text-base">Importar Nómina desde Archivo (Reemplaza la lista actual)</h3>
+        <p class="text-xs text-slate-400">Seleccione su archivo CSV editado con columnas: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Grado, Nombre, Apellido, DNI, Password, Rol</code> (<a href="/nomina-socios-template.csv" download class="text-amber-400 underline font-semibold ml-2">Descargar Plantilla CSV</a>)</p>
         
         <div class="flex flex-col sm:flex-row items-center gap-4">
           <input type="file" @change="handleFileUpload($event)" accept=".csv, .txt, .xls, .xlsx" class="block w-full text-xs text-slate-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-slate-950 hover:file:bg-amber-500 cursor-pointer bg-slate-950 border border-slate-700 rounded-xl">
@@ -524,7 +524,7 @@
       </div>
 
       <!-- Tabla de Personal con Selector de Roles -->
-      <div class="bg-slate-900/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
+      <div class="bg-slate-900/75 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
         <div class="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
           <h3 class="font-bold text-slate-100">Personal y Roles Registrados (<span x-text="personnel.length"></span>)</h3>
           <span class="text-xs text-amber-400">Super Administrador: Único autorizado para modificar roles y eliminar personal</span>
@@ -624,7 +624,7 @@
   </div>
 
   <!-- FOOTER -->
-  <footer class="bg-slate-900/90 backdrop-blur-md text-slate-400 py-6 mt-auto border-t border-slate-800 text-xs relative z-10" x-show="isLoggedIn">
+  <footer class="bg-slate-900/75 backdrop-blur-md text-slate-400 py-6 mt-auto border-t border-slate-800 text-xs relative z-10" x-show="isLoggedIn">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div>
         <p class="font-bold text-slate-200">Racionamiento - Cas Subof GECB</p>
@@ -671,26 +671,26 @@
         payments: {},
 
         init() {
-          const savedPersonnel = localStorage.getItem('cas_personnel_v9');
+          const savedPersonnel = localStorage.getItem('cas_personnel_v10');
           if (savedPersonnel) {
             try { this.personnel = JSON.parse(savedPersonnel); } catch(e) {}
           } else {
             this.seedSampleRations();
           }
 
-          const savedRations = localStorage.getItem('cas_rations_v9');
+          const savedRations = localStorage.getItem('cas_rations_v10');
           if (savedRations) {
             try { this.rations = JSON.parse(savedRations); } catch(e) {}
           } else {
             this.seedSampleRations();
           }
 
-          const savedPayments = localStorage.getItem('cas_payments_v9');
+          const savedPayments = localStorage.getItem('cas_payments_v10');
           if (savedPayments) {
             try { this.payments = JSON.parse(savedPayments); } catch(e) {}
           }
 
-          const savedCost = localStorage.getItem('cas_ration_cost_v9');
+          const savedCost = localStorage.getItem('cas_ration_cost_v10');
           if (savedCost) {
             this.rationCost = Number(savedCost);
           }
@@ -759,10 +759,10 @@
         },
 
         saveState() {
-          localStorage.setItem('cas_personnel_v9', JSON.stringify(this.personnel));
-          localStorage.setItem('cas_rations_v9', JSON.stringify(this.rations));
-          localStorage.setItem('cas_payments_v9', JSON.stringify(this.payments));
-          localStorage.setItem('cas_ration_cost_v9', this.rationCost);
+          localStorage.setItem('cas_personnel_v10', JSON.stringify(this.personnel));
+          localStorage.setItem('cas_rations_v10', JSON.stringify(this.rations));
+          localStorage.setItem('cas_payments_v10', JSON.stringify(this.payments));
+          localStorage.setItem('cas_ration_cost_v10', this.rationCost);
           if (this.currentUser) {
             const updated = this.personnel.find(p => p.dni === this.currentUser.dni);
             if (updated) this.currentUser = updated;
@@ -884,32 +884,35 @@
           reader.onload = (e) => {
             const text = e.target.result;
             let lines = text.split('\n');
-            let count = 0;
+            let newPersonnel = [];
             lines.forEach((line, index) => {
-              // Skip header row if it contains 'Grado' or 'DNI'
               if (index === 0 && (line.toLowerCase().includes('grado') || line.toLowerCase().includes('dni'))) return;
               
               let parts = line.split(',').map(s => s.trim().replace(/^["']|["']$/g, ''));
               if (parts.length >= 6) {
                 let [grado, nombre, apellido, dni, password, rol] = parts;
                 if (dni && nombre) {
-                  let existing = this.personnel.find(p => p.dni === dni);
-                  if (!existing) {
-                    this.personnel.push({
-                      grado,
-                      nombre,
-                      apellido,
-                      dni,
-                      password: password || dni,
-                      rol: (rol && rol.match(/Admin_Raciones|Admin_Tesorero|Super_Admin/i)) ? rol : 'Comensal'
-                    });
-                    count++;
-                  }
+                  newPersonnel.push({
+                    grado,
+                    nombre,
+                    apellido,
+                    dni,
+                    password: password || dni,
+                    rol: (rol && rol.match(/Admin_Raciones|Admin_Tesorero|Super_Admin/i)) ? rol : 'Comensal'
+                  });
                 }
               }
             });
-            alert(`Se importaron ${count} socios correctamente desde el archivo de Excel/CSV.`);
-            this.saveState();
+
+            if (newPersonnel.length > 0) {
+              if (confirm(`Se encontraron ${newPersonnel.length} socios en el archivo. ¿Desea reemplazar toda la nómina actual con esta nueva lista?`)) {
+                this.personnel = newPersonnel;
+                alert(`¡Nómina actualizada con éxito! Se cargaron ${newPersonnel.length} socios.`);
+                this.saveState();
+              }
+            } else {
+              alert('No se encontraron registros válidos. Asegúrese de que el archivo tenga las 6 columnas: Grado, Nombre, Apellido, DNI, Password, Rol.');
+            }
             event.target.value = '';
           };
           reader.readAsText(file, 'UTF-8');
