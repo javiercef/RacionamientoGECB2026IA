@@ -40,10 +40,8 @@
     <div class="bg-slate-900/95 backdrop-blur-md rounded-2xl max-w-md w-full p-8 shadow-2xl border border-slate-700/80 space-y-6">
       
       <div class="text-center space-y-2">
-        <div class="w-16 h-16 mx-auto rounded-full bg-slate-950 border-2 border-amber-500 flex items-center justify-center shadow-inner">
-          <svg class="w-9 h-9 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-          </svg>
+        <div class="w-16 h-16 mx-auto rounded-full bg-slate-950 border-2 border-amber-500 flex items-center justify-center shadow-inner overflow-hidden">
+          <img src="/sargento-cabral.webp" alt="Escudo" class="w-full h-full object-cover">
         </div>
         <h2 class="text-xl font-extrabold text-slate-100 font-heading">Racionamiento - Cas Subof GECB</h2>
         <p class="text-xs text-slate-400">Ingrese su DNI y contraseña para acceder al sistema.</p>
@@ -75,12 +73,10 @@
   <header class="military-gradient text-white shadow-xl border-b border-slate-800 relative z-10" x-show="isLoggedIn">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
       
-      <!-- IZQUIERDA: Escudo del Ejército Argentino -->
+      <!-- IZQUIERDA: Escudo Circular (sargento-cabral.webp) -->
       <div class="flex items-center gap-3">
         <div class="w-12 h-12 rounded-full bg-slate-900 border-2 border-amber-500 flex items-center justify-center shadow-inner overflow-hidden flex-shrink-0">
-          <svg class="w-8 h-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-          </svg>
+          <img src="/sargento-cabral.webp" alt="Escudo" class="w-full h-full object-cover">
         </div>
         <div>
           <span class="block text-xs uppercase tracking-widest text-amber-400 font-semibold">Ejército Argentino</span>
@@ -120,7 +116,7 @@
     </div>
   </header>
 
-  <!-- NAVIGATION TABS & TIME SIMULATOR BAR -->
+  <!-- NAVIGATION TABS (Sin simulador de hora) -->
   <nav class="bg-slate-900/90 backdrop-blur-md text-slate-200 shadow border-b border-slate-800 relative z-10" x-show="isLoggedIn">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-2 py-2">
       <div class="flex items-center space-x-1 sm:space-x-3 overflow-x-auto">
@@ -159,15 +155,6 @@
           Nómina & Roles (Super Administrador)
         </button>
       </div>
-
-      <!-- Simulador de Hora / Control de Cierre 10:00 AM -->
-      <div class="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-700 text-xs">
-        <span class="text-slate-400">Simulador Hora Cierre (10:00 AM):</span>
-        <select x-model.number="simulatedHour" class="bg-slate-900 text-amber-300 font-bold rounded px-2 py-1 border border-slate-600">
-          <option value="9">09:00 AM (Permite editar hoy)</option>
-          <option value="11">11:00 AM (Bloquea edición hoy)</option>
-        </select>
-      </div>
     </div>
   </nav>
 
@@ -199,7 +186,7 @@
       <div class="bg-amber-950/60 backdrop-blur-md border-l-4 border-amber-500 p-4 rounded-xl text-xs text-amber-200 flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-2">
           <svg class="w-5 h-5 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-          <span><strong>Normativa de Rancho:</strong> El día en curso (<span x-text="currentSystemDay"></span>) solo admite cambios hasta las <strong class="underline">10:00 AM</strong>. Hora simulada actual: <strong x-text="simulatedHour + ':00 AM'"></strong>. <span x-show="isTodayLocked()" class="text-red-400 font-bold ml-1">(Bloqueado para hoy por horario de cierre)</span></span>
+          <span><strong>Normativa de Rancho:</strong> El día en curso (<span x-text="currentSystemDay"></span>) solo admite cambios hasta las <strong class="underline">10:00 AM</strong>. <span x-show="isTodayLocked()" class="text-red-400 font-bold ml-1">(Bloqueado para hoy por horario de cierre superado)</span></span>
         </div>
       </div>
 
@@ -681,26 +668,26 @@
         payments: {},
 
         init() {
-          const savedPersonnel = localStorage.getItem('cas_personnel_v7');
+          const savedPersonnel = localStorage.getItem('cas_personnel_v8');
           if (savedPersonnel) {
             try { this.personnel = JSON.parse(savedPersonnel); } catch(e) {}
           } else {
             this.seedSampleRations();
           }
 
-          const savedRations = localStorage.getItem('cas_rations_v7');
+          const savedRations = localStorage.getItem('cas_rations_v8');
           if (savedRations) {
             try { this.rations = JSON.parse(savedRations); } catch(e) {}
           } else {
             this.seedSampleRations();
           }
 
-          const savedPayments = localStorage.getItem('cas_payments_v7');
+          const savedPayments = localStorage.getItem('cas_payments_v8');
           if (savedPayments) {
             try { this.payments = JSON.parse(savedPayments); } catch(e) {}
           }
 
-          const savedCost = localStorage.getItem('cas_ration_cost_v7');
+          const savedCost = localStorage.getItem('cas_ration_cost_v8');
           if (savedCost) {
             this.rationCost = Number(savedCost);
           }
@@ -769,10 +756,10 @@
         },
 
         saveState() {
-          localStorage.setItem('cas_personnel_v7', JSON.stringify(this.personnel));
-          localStorage.setItem('cas_rations_v7', JSON.stringify(this.rations));
-          localStorage.setItem('cas_payments_v7', JSON.stringify(this.payments));
-          localStorage.setItem('cas_ration_cost_v7', this.rationCost);
+          localStorage.setItem('cas_personnel_v8', JSON.stringify(this.personnel));
+          localStorage.setItem('cas_rations_v8', JSON.stringify(this.rations));
+          localStorage.setItem('cas_payments_v8', JSON.stringify(this.payments));
+          localStorage.setItem('cas_ration_cost_v8', this.rationCost);
           if (this.currentUser) {
             const updated = this.personnel.find(p => p.dni === this.currentUser.dni);
             if (updated) this.currentUser = updated;
@@ -788,7 +775,9 @@
         },
 
         isTodayLocked() {
-          return this.simulatedHour >= 10;
+          // Real-time hour check (10:00 AM)
+          const currentHour = new Date().getHours();
+          return currentHour >= 10;
         },
 
         getDayRationType(dni, day) {
@@ -899,9 +888,8 @@
               if (parts.length >= 4) {
                 let [nombre, apellido, dni, password, rol] = parts;
                 if (!rol && parts.length === 4) {
-                  // If password is omitted or 4 columns
                   rol = password;
-                  password = dni; // fallback
+                  password = dni;
                 }
                 if (dni && nombre) {
                   let existing = this.personnel.find(p => p.dni === dni);
