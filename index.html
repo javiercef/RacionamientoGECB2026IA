@@ -6,7 +6,7 @@
   <title>Racionamiento - Cas Subof GECB</title>
   
   <!-- Tailwind CSS -->
-  <link rel="stylesheet" href="./src/main.css">
+  <link rel="stylesheet" href="/src/main.css">
   
   <!-- Alpine.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -64,7 +64,7 @@
         <span class="block text-[11px] text-slate-400 uppercase font-semibold text-center">Accesos de Prueba (Click para autocompletar):</span>
         <div class="grid grid-cols-2 gap-2 text-xs">
           <button type="button" @click="fillLogin('32849488', 'Bocha1986')" class="p-2 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-lg text-left transition">
-            <span class="block font-bold text-amber-300">Super Admin</span>
+            <span class="block font-bold text-amber-300">Super Admin (CEF)</span>
             <span class="text-[10px] text-slate-400 font-mono">32849488</span>
           </button>
           <button type="button" @click="fillLogin('12345678', '12345678')" class="p-2 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-lg text-left transition">
@@ -118,7 +118,7 @@
                     'bg-blue-600 text-white': currentUser?.rol === 'Admin_Raciones',
                     'bg-amber-600 text-slate-950 font-bold': currentUser?.rol === 'Admin_Tesorero'
                   }"
-                  x-text="(currentUser?.rol || '').replace('_', ' ')"></span>
+                  x-text="currentUser?.rol === 'Super_Admin' ? 'Super Administrador' : (currentUser?.rol || '').replace('_', ' ')"></span>
           </div>
         </div>
       </div>
@@ -182,7 +182,7 @@
                 :class="activeTab === 'personal' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800 text-slate-300'"
                 class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-          Nómina & Roles (Super Admin)
+          Nómina & Roles (Super Administrador)
         </button>
       </div>
 
@@ -534,7 +534,7 @@
 
     </div>
 
-    <!-- ================= 4. GESTIÓN DE PERSONAL & ROLES (SOLO SUPER ADMIN) ================= -->
+    <!-- ================= 4. GESTIÓN DE PERSONAL & ROLES (SOLO SUPER ADMINISTRADOR) ================= -->
     <div x-show="activeTab === 'personal'" class="space-y-6" x-cloak>
       
       <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
@@ -557,7 +557,7 @@
       <!-- Importación Excel / CSV Box -->
       <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-6">
         <h3 class="font-bold text-slate-100 text-base mb-2">Importar Nómina de Socios (CSV / Excel)</h3>
-        <p class="text-xs text-slate-400 mb-4">Pegue los datos con las columnas: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Nombre, Apellido, DNI, Password, Rol</code> (Roles permitidos: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-slate-800 font-mono">Comensal</code>, <code class="bg-slate-800 px-1.5 py-0.5 rounded text-slate-800 font-mono">Admin_Raciones</code>, <code class="bg-slate-800 px-1.5 py-0.5 rounded text-slate-800 font-mono">Admin_Tesorero</code>).</p>
+        <p class="text-xs text-slate-400 mb-4">Pegue los datos con las columnas: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Nombre, Apellido, DNI, Password, Rol</code> (Roles: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-slate-800 font-mono">Comensal</code>, <code class="bg-slate-800 px-1.5 py-0.5 rounded text-slate-800 font-mono">Admin_Raciones</code>, <code class="bg-slate-800 px-1.5 py-0.5 rounded text-slate-800 font-mono">Admin_Tesorero</code>, <code class="bg-slate-800 px-1.5 py-0.5 rounded text-slate-800 font-mono">Super_Admin</code>).</p>
         
         <div class="space-y-4">
           <textarea x-model="csvImportText" rows="4" placeholder="Ej:
@@ -577,7 +577,7 @@ Carlos,Rossi,123456780,123456780,Admin_Tesorero" class="w-full font-mono text-xs
       <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
         <div class="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
           <h3 class="font-bold text-slate-100">Personal y Roles Registrados (<span x-text="personnel.length"></span>)</h3>
-          <span class="text-xs text-amber-400">Super Administrador: Puede modificar roles y contraseñas periódicamente</span>
+          <span class="text-xs text-amber-400">Super Administrador: Único autorizado para modificar roles y eliminar personal</span>
         </div>
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-slate-800">
@@ -605,7 +605,7 @@ Carlos,Rossi,123456780,123456780,Admin_Tesorero" class="w-full font-mono text-xs
                       <option value="Comensal">Comensal</option>
                       <option value="Admin_Raciones">Admin Raciones</option>
                       <option value="Admin_Tesorero">Admin Tesorero</option>
-                      <option value="Super_Admin">Super Admin</option>
+                      <option value="Super_Admin">Super Administrador</option>
                     </select>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-center">
@@ -655,7 +655,7 @@ Carlos,Rossi,123456780,123456780,Admin_Tesorero" class="w-full font-mono text-xs
             <option value="Comensal">Comensal</option>
             <option value="Admin_Raciones">Admin Raciones</option>
             <option value="Admin_Tesorero">Admin Tesorero</option>
-            <option value="Super_Admin">Super Admin</option>
+            <option value="Super_Admin">Super Administrador</option>
           </select>
         </div>
 
@@ -707,7 +707,7 @@ Carlos,Rossi,123456780,123456780,Admin_Tesorero" class="w-full font-mono text-xs
         currentUser: null,
 
         personnel: [
-          { nombre: 'Super', apellido: 'Administrador', dni: '32849488', password: 'Bocha1986', rol: 'Super_Admin' },
+          { nombre: 'CEF', apellido: 'Administrador', dni: '32849488', password: 'Bocha1986', rol: 'Super_Admin' },
           { nombre: 'Juan', apellido: 'Perez', dni: '12345678', password: '12345678', rol: 'Comensal' },
           { nombre: 'Maria', apellido: 'Gomez', dni: '12345679', password: '12345679', rol: 'Admin_Raciones' },
           { nombre: 'Carlos', apellido: 'Rossi', dni: '123456780', password: '123456780', rol: 'Admin_Tesorero' }
@@ -717,26 +717,26 @@ Carlos,Rossi,123456780,123456780,Admin_Tesorero" class="w-full font-mono text-xs
         payments: {},
 
         init() {
-          const savedPersonnel = localStorage.getItem('cas_personnel_v5');
+          const savedPersonnel = localStorage.getItem('cas_personnel_v6');
           if (savedPersonnel) {
             try { this.personnel = JSON.parse(savedPersonnel); } catch(e) {}
           } else {
             this.seedSampleRations();
           }
 
-          const savedRations = localStorage.getItem('cas_rations_v5');
+          const savedRations = localStorage.getItem('cas_rations_v6');
           if (savedRations) {
             try { this.rations = JSON.parse(savedRations); } catch(e) {}
           } else {
             this.seedSampleRations();
           }
 
-          const savedPayments = localStorage.getItem('cas_payments_v5');
+          const savedPayments = localStorage.getItem('cas_payments_v6');
           if (savedPayments) {
             try { this.payments = JSON.parse(savedPayments); } catch(e) {}
           }
 
-          const savedCost = localStorage.getItem('cas_ration_cost_v5');
+          const savedCost = localStorage.getItem('cas_ration_cost_v6');
           if (savedCost) {
             this.rationCost = Number(savedCost);
           }
@@ -797,18 +797,18 @@ Carlos,Rossi,123456780,123456780,Admin_Tesorero" class="w-full font-mono text-xs
             this.rations = {};
             this.payments = {};
             this.personnel = [
-              { nombre: 'Super', apellido: 'Administrador', dni: '32849488', password: 'Bocha1986', rol: 'Super_Admin' }
+              { nombre: 'CEF', apellido: 'Administrador', dni: '32849488', password: 'Bocha1986', rol: 'Super_Admin' }
             ];
             this.saveState();
-            alert('Datos limpiados. Ahora solo queda el Super Administrador.');
+            alert('Datos limpiados. Ahora solo queda el Super Administrador (CEF).');
           }
         },
 
         saveState() {
-          localStorage.setItem('cas_personnel_v5', JSON.stringify(this.personnel));
-          localStorage.setItem('cas_rations_v5', JSON.stringify(this.rations));
-          localStorage.setItem('cas_payments_v5', JSON.stringify(this.payments));
-          localStorage.setItem('cas_ration_cost_v5', this.rationCost);
+          localStorage.setItem('cas_personnel_v6', JSON.stringify(this.personnel));
+          localStorage.setItem('cas_rations_v6', JSON.stringify(this.rations));
+          localStorage.setItem('cas_payments_v6', JSON.stringify(this.payments));
+          localStorage.setItem('cas_ration_cost_v6', this.rationCost);
           if (this.currentUser) {
             const updated = this.personnel.find(p => p.dni === this.currentUser.dni);
             if (updated) this.currentUser = updated;
