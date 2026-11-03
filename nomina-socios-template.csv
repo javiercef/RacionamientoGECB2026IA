@@ -1,5 +1,7 @@
 Grado,Nombre,Apellido,DNI,Password,Rol
-Suboficial Mayor,Juan,Perez,12345678,12345678,Comensal
-Sargento Primero,Maria,Gomez,12345679,12345679,Admin_Raciones
-Cabo Primero,Carlos,Rossi,123456780,123456780,Admin_Tesorero
-Teniente Coronel,CEF,Administrador,32849488,Bocha1986,Super_Admin
+SM,Juan,Perez,12345678,12345678,Comensal
+SI,Maria,Gomez,12345679,12345679,Admin_Raciones
+CI,Carlos,Rossi,123456780,123456780,Admin_Tesorero
+SI,CEF,Administrador,32849488,Bocha1986,Super_Admin
+SM, GABRIEL DAVID,QUEVEDO,24332270,12345678,COMENSAL,
+SG,RICARDO FABIAN,CHAPARRO,34328126,12345678,COMENSAL
