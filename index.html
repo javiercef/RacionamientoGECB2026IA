@@ -26,24 +26,28 @@
       background-attachment: fixed;
     }
     .military-gradient {
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.65) 0%, rgba(15, 23, 42, 0.65) 100%);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.75) 100%);
+    }
+    /* Text shadow for better readability over transparent background */
+    .text-glow {
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
     }
   </style>
 </head>
 <body class="h-full flex flex-col antialiased text-slate-100 bg-slate-950 bg-custom-image relative" x-data="appData()" x-init="init()">
 
-  <!-- Dark Overlay for Readability (Even more transparent so background shows vividly) -->
+  <!-- Dark Overlay for Readability (Increased transparency by another 10%) -->
   <div class="absolute inset-0 bg-slate-950/60 pointer-events-none z-0"></div>
 
   <!-- ================= PANTALLA DE LOGIN ================= -->
   <div x-show="!isLoggedIn" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-sm p-4 relative z-20" x-cloak>
-    <div class="bg-slate-900/60 backdrop-blur-md rounded-2xl max-w-md w-full p-8 shadow-2xl border border-slate-700/80 space-y-6">
+    <div class="bg-slate-900/65 backdrop-blur-md rounded-2xl max-w-md w-full p-8 shadow-2xl border border-slate-700/60 space-y-6">
       
       <div class="text-center space-y-2">
         <div class="w-16 h-16 mx-auto rounded-full bg-slate-950 border-2 border-amber-500 flex items-center justify-center shadow-inner overflow-hidden">
           <img src="/sargento-cabral.webp" alt="Escudo" class="w-full h-full object-cover">
         </div>
-        <h2 class="text-xl font-extrabold text-slate-100 font-heading">Racionamiento - Cas Subof GECB</h2>
+        <h2 class="text-xl font-extrabold text-slate-100 font-heading text-glow">Racionamiento - Cas Subof GECB</h2>
         <p class="text-xs text-slate-300">Ingrese su DNI y contraseña para acceder al sistema.</p>
       </div>
 
@@ -70,7 +74,7 @@
   </div>
 
   <!-- HEADER -->
-  <header class="military-gradient text-white shadow-xl border-b border-slate-800 relative z-10" x-show="isLoggedIn">
+  <header class="military-gradient text-white shadow-xl border-b border-slate-800/80 relative z-10 backdrop-blur-sm" x-show="isLoggedIn">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
       
       <!-- IZQUIERDA: Escudo Circular (sargento-cabral.webp) -->
@@ -79,13 +83,13 @@
           <img src="/sargento-cabral.webp" alt="Escudo" class="w-full h-full object-cover">
         </div>
         <div>
-          <span class="block text-xs uppercase tracking-widest text-amber-400 font-semibold">Ejército Argentino</span>
-          <h1 class="text-lg md:text-xl font-extrabold tracking-tight font-heading">Racionamiento - Cas Subof GECB</h1>
+          <span class="block text-xs uppercase tracking-widest text-amber-400 font-semibold text-glow">Ejército Argentino</span>
+          <h1 class="text-lg md:text-xl font-extrabold tracking-tight font-heading text-glow">Racionamiento - Cas Subof GECB</h1>
         </div>
       </div>
 
       <!-- CENTRO: Identidad de Usuario Autenticado -->
-      <div class="bg-slate-900/55 backdrop-blur-md px-5 py-2 rounded-xl border border-slate-700 text-center flex items-center gap-3" x-show="currentUser">
+      <div class="bg-slate-900/55 backdrop-blur-md px-5 py-2 rounded-xl border border-slate-700/60 text-center flex items-center gap-3 shadow-lg" x-show="currentUser">
         <div class="w-9 h-9 rounded-full bg-amber-600 text-slate-950 font-bold flex items-center justify-center text-sm shadow">
           <span x-text="(currentUser?.nombre || '').charAt(0) + (currentUser?.apellido || '').charAt(0)"></span>
         </div>
@@ -93,7 +97,7 @@
           <div class="text-xs text-slate-300">Bienvenido/a,</div>
           <div class="text-sm font-bold text-amber-300 flex items-center gap-2">
             <span x-text="(currentUser?.grado ? currentUser.grado + ' ' : '') + (currentUser?.nombre || '') + ' ' + (currentUser?.apellido || '')"></span>
-            <span class="px-2 py-0.5 text-[10px] rounded uppercase font-semibold tracking-wider"
+            <span class="px-2 py-0.5 text-[10px] rounded uppercase font-semibold tracking-wider shadow"
                   :class="{
                     'bg-amber-500 text-slate-950 font-bold': currentUser?.rol === 'Super_Admin',
                     'bg-emerald-600 text-slate-950 font-bold': currentUser?.rol === 'Comensal',
@@ -105,8 +109,13 @@
         </div>
       </div>
 
-      <!-- DERECHA: Botón Logout -->
-      <div class="flex items-center gap-4">
+      <!-- DERECHA: Botón Cloud Sync & Logout -->
+      <div class="flex items-center gap-3">
+        <button @click="syncCloudData()" title="Sincronizar con la Nube" class="bg-slate-800/80 hover:bg-slate-700 text-amber-400 font-bold px-3 py-1.5 rounded-lg text-xs transition shadow flex items-center gap-1.5 border border-slate-700">
+          <svg class="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+          Sincronizar
+        </button>
+
         <button @click="logout()" class="bg-red-700 hover:bg-red-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition shadow flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
           Salir
@@ -117,12 +126,12 @@
   </header>
 
   <!-- NAVIGATION TABS -->
-  <nav class="bg-slate-900/55 backdrop-blur-md text-slate-200 shadow border-b border-slate-800 relative z-10" x-show="isLoggedIn">
+  <nav class="bg-slate-900/55 backdrop-blur-md text-slate-200 shadow border-b border-slate-800/80 relative z-10" x-show="isLoggedIn">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-2 py-2">
       <div class="flex items-center space-x-1 sm:space-x-3 overflow-x-auto">
         <!-- Tab Comensal -->
         <button @click="activeTab = 'comensal'" 
-                :class="activeTab === 'comensal' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800/55 text-slate-300'"
+                :class="activeTab === 'comensal' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800/60 text-slate-300'"
                 class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
           Mi Racionamiento (Comensal)
@@ -131,7 +140,7 @@
         <!-- Tab Admin Raciones -->
         <button @click="activeTab = 'admin_raciones'" 
                 x-show="currentUser?.rol === 'Admin_Raciones' || currentUser?.rol === 'Super_Admin'"
-                :class="activeTab === 'admin_raciones' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800/55 text-slate-300'"
+                :class="activeTab === 'admin_raciones' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800/60 text-slate-300'"
                 class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
           Planilla Diaria (Admin Raciones)
@@ -140,7 +149,7 @@
         <!-- Tab Admin Tesorero -->
         <button @click="activeTab = 'admin_tesorero'" 
                 x-show="currentUser?.rol === 'Admin_Tesorero' || currentUser?.rol === 'Super_Admin'"
-                :class="activeTab === 'admin_tesorero' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800/55 text-slate-300'"
+                :class="activeTab === 'admin_tesorero' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800/60 text-slate-300'"
                 class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           Extracto Mensual & Descuentos (Tesorero)
@@ -149,7 +158,7 @@
         <!-- Tab Gestión de Personal (SOLO SUPER ADMINISTRADOR) -->
         <button @click="activeTab = 'personal'" 
                 x-show="currentUser?.rol === 'Super_Admin'"
-                :class="activeTab === 'personal' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800/55 text-slate-300'"
+                :class="activeTab === 'personal' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800/60 text-slate-300'"
                 class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
           Nómina & Roles (Super Administrador)
@@ -165,17 +174,17 @@
     <div x-show="activeTab === 'comensal'" class="space-y-6">
       
       <!-- Panel informativo superior -->
-      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800/80 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
-          <h2 class="text-xl font-bold text-slate-100 font-heading">Planificación Mensual de Raciones</h2>
+          <h2 class="text-xl font-bold text-slate-100 font-heading text-glow">Planificación Mensual de Raciones</h2>
           <p class="text-sm text-slate-300 mt-1">Haga clic en cualquier día del calendario para seleccionar <strong class="text-slate-100">Almuerzo</strong>, <strong class="text-slate-100">Cena</strong> o <strong class="text-slate-100">Ambos</strong>. Cierre diario: 10:00 AM.</p>
         </div>
         <div class="flex items-center gap-3">
-          <div class="bg-slate-800/60 border border-slate-700 rounded-xl px-4 py-2 text-center">
+          <div class="bg-slate-800/60 border border-slate-700/80 rounded-xl px-4 py-2 text-center shadow">
             <span class="block text-xs text-amber-400 font-semibold uppercase">Total Raciones Mes</span>
             <span class="text-2xl font-extrabold text-amber-300" x-text="getUserTotalRations(currentUser?.dni)">0</span>
           </div>
-          <div class="bg-slate-800/60 border border-slate-700 rounded-xl px-4 py-2 text-center">
+          <div class="bg-slate-800/60 border border-slate-700/80 rounded-xl px-4 py-2 text-center shadow">
             <span class="block text-xs text-emerald-400 font-semibold uppercase">Costo Estimado</span>
             <span class="text-2xl font-extrabold text-emerald-300" x-text="'$' + (getUserTotalRations(currentUser?.dni) * rationCost).toLocaleString()">$0</span>
           </div>
@@ -183,7 +192,7 @@
       </div>
 
       <!-- Alerta de Cierre 10:00 AM -->
-      <div class="bg-amber-950/40 backdrop-blur-md border-l-4 border-amber-500 p-4 rounded-xl text-xs text-amber-200 flex items-center justify-between shadow-sm">
+      <div class="bg-amber-950/50 backdrop-blur-md border-l-4 border-amber-500 p-4 rounded-xl text-xs text-amber-200 flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-2">
           <svg class="w-5 h-5 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
           <span><strong>Normativa del Casino de Suboficiales:</strong> El día en curso (<span x-text="currentSystemDay"></span>) solo admite cambios hasta las <strong class="underline">10:00 AM</strong>. <span x-show="isTodayLocked()" class="text-red-400 font-bold ml-1">(Bloqueado para hoy por horario de cierre superado)</span></span>
@@ -191,9 +200,9 @@
       </div>
 
       <!-- CALENDARIO NORMAL (GRID DE MES) -->
-      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
-        <div class="p-4 bg-slate-800/60 border-b border-slate-700 flex justify-between items-center">
-          <h3 class="font-bold text-slate-100 text-lg flex items-center gap-2">
+      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800/80 overflow-hidden">
+        <div class="p-4 bg-slate-800/60 border-b border-slate-700/80 flex justify-between items-center">
+          <h3 class="font-bold text-slate-100 text-lg flex items-center gap-2 text-glow">
             <span>Calendario de Racionamiento - <span x-text="currentMonthName + ' ' + currentYear"></span></span>
           </h3>
           <span class="text-xs text-slate-300">Haga clic en un día para anotar o modificar</span>
@@ -203,22 +212,22 @@
           <!-- Cabecera de Días de la Semana -->
           <div class="grid grid-cols-7 gap-2 mb-3 text-center">
             <div class="text-xs font-bold text-amber-400 uppercase py-2 bg-slate-800/50 rounded-lg">Dom</div>
-            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/50 rounded-lg">Lun</div>
-            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/50 rounded-lg">Mar</div>
-            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/50 rounded-lg">Mié</div>
-            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/50 rounded-lg">Jue</div>
-            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/50 rounded-lg">Vie</div>
-            <div class="text-xs font-bold text-slate-300 uppercase py-2 bg-slate-800/50 rounded-lg">Sáb</div>
+            <div class="text-xs font-bold text-slate-200 uppercase py-2 bg-slate-800/50 rounded-lg">Lun</div>
+            <div class="text-xs font-bold text-slate-200 uppercase py-2 bg-slate-800/50 rounded-lg">Mar</div>
+            <div class="text-xs font-bold text-slate-200 uppercase py-2 bg-slate-800/50 rounded-lg">Mié</div>
+            <div class="text-xs font-bold text-slate-200 uppercase py-2 bg-slate-800/50 rounded-lg">Jue</div>
+            <div class="text-xs font-bold text-slate-200 uppercase py-2 bg-slate-800/50 rounded-lg">Vie</div>
+            <div class="text-xs font-bold text-slate-200 uppercase py-2 bg-slate-800/50 rounded-lg">Sáb</div>
           </div>
 
-          <!-- Días del Mes (Grid 7 columnas - High Transparency) -->
+          <!-- Días del Mes (Grid 7 columnas - Increased transparency further) -->
           <div class="grid grid-cols-7 gap-2">
             <template x-for="day in getDaysInCurrentMonth()" :key="day">
               <div @click="openDayModal(day)" 
-                   class="min-h-[100px] rounded-xl p-3 border transition cursor-pointer flex flex-col justify-between relative group"
+                   class="min-h-[100px] rounded-xl p-3 border transition cursor-pointer flex flex-col justify-between relative group shadow-md"
                    :class="{
-                     'bg-slate-800/65 border-amber-500 ring-2 ring-amber-500/30': day === currentSystemDay,
-                     'bg-slate-800/35 hover:bg-slate-800/65 border-slate-700 hover:border-slate-600': day !== currentSystemDay
+                     'bg-slate-800/60 border-amber-500 ring-2 ring-amber-500/30': day === currentSystemDay,
+                     'bg-slate-800/35 hover:bg-slate-800/60 border-slate-700/70 hover:border-slate-500': day !== currentSystemDay
                    }">
                 
                 <div class="flex justify-between items-start">
@@ -229,20 +238,20 @@
                 <!-- Estado de la ración en el día -->
                 <div class="my-auto text-center" x-show="currentUser">
                   <template x-if="getDayRationType(currentUser?.dni, day) === 'ninguno'">
-                    <span class="text-[11px] text-slate-300 italic">Sin ración</span>
+                    <span class="text-[11px] text-slate-400 italic">Sin ración</span>
                   </template>
                   <template x-if="getDayRationType(currentUser?.dni, day) !== 'ninguno'">
                     <span class="inline-block px-2 py-1 text-[11px] rounded-lg font-bold uppercase shadow"
                           :class="{
-                            'bg-blue-900/80 text-blue-200 border border-blue-700': getDayRationType(currentUser?.dni, day) === 'almuerzo',
-                            'bg-indigo-900/80 text-indigo-200 border border-indigo-700': getDayRationType(currentUser?.dni, day) === 'cena',
-                            'bg-emerald-900/80 text-emerald-200 border border-emerald-700': getDayRationType(currentUser?.dni, day) === 'ambos'
+                            'bg-blue-900/85 text-blue-200 border border-blue-700': getDayRationType(currentUser?.dni, day) === 'almuerzo',
+                            'bg-indigo-900/85 text-indigo-200 border border-indigo-700': getDayRationType(currentUser?.dni, day) === 'cena',
+                            'bg-emerald-900/85 text-emerald-200 border border-emerald-700': getDayRationType(currentUser?.dni, day) === 'ambos'
                           }"
                           x-text="getDayRationType(currentUser?.dni, day)"></span>
                   </template>
                 </div>
 
-                <div class="text-[10px] text-slate-200 text-right group-hover:text-amber-400 transition">
+                <div class="text-[10px] text-slate-200 text-right group-hover:text-amber-400 transition font-semibold">
                   Editar &rarr;
                 </div>
               </div>
@@ -316,13 +325,13 @@
     <!-- ================= 2. VISTA ADMIN RACIONES (PLANILLA DEL DÍA) ================= -->
     <div x-show="activeTab === 'admin_raciones'" class="space-y-6">
       
-      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800/80 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
-          <h2 class="text-xl font-bold text-slate-100 font-heading">Planilla del Día (Admin Raciones)</h2>
+          <h2 class="text-xl font-bold text-slate-100 font-heading text-glow">Planilla del Día (Admin Raciones)</h2>
           <p class="text-sm text-slate-300 mt-1">Resumen cuantitativo y listado nominal de raciones de rancho para el día seleccionado.</p>
         </div>
         <div class="flex items-center gap-3">
-          <label class="text-xs font-bold text-slate-300 uppercase">Seleccionar Día:</label>
+          <label class="text-xs font-bold text-slate-200 uppercase">Seleccionar Día:</label>
           <select x-model.number="selectedDay" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm font-bold text-slate-100 focus:ring-2 focus:ring-amber-500">
             <template x-for="day in getDaysInCurrentMonth()" :key="day">
               <option :value="day" x-text="day + ' de ' + currentMonthName"></option>
@@ -333,33 +342,33 @@
 
       <!-- Resumen Cuantitativo -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-blue-950/60 backdrop-blur-md border border-blue-800 text-white rounded-2xl p-6 shadow-xl flex items-center justify-between">
+        <div class="bg-blue-950/65 backdrop-blur-md border border-blue-800 text-white rounded-2xl p-6 shadow-xl flex items-center justify-between">
           <div>
-            <span class="text-xs uppercase tracking-wider text-blue-300 font-semibold">Total Almuerzos del Día</span>
+            <span class="text-xs uppercase tracking-wider text-blue-200 font-semibold">Total Almuerzos del Día</span>
             <div class="text-4xl font-extrabold mt-1 text-blue-100" x-text="getDailyCount(selectedDay, 'almuerzo')">0</div>
-            <span class="text-xs text-blue-300 mt-1 block">Comensales inscriptos (Almuerzo o Ambos)</span>
+            <span class="text-xs text-blue-200 mt-1 block">Comensales inscriptos (Almuerzo o Ambos)</span>
           </div>
-          <div class="w-14 h-14 rounded-2xl bg-blue-900/80 flex items-center justify-center text-blue-200">
+          <div class="w-14 h-14 rounded-2xl bg-blue-900 flex items-center justify-center text-blue-200">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           </div>
         </div>
 
-        <div class="bg-indigo-950/60 backdrop-blur-md border border-indigo-800 text-white rounded-2xl p-6 shadow-xl flex items-center justify-between">
+        <div class="bg-indigo-950/65 backdrop-blur-md border border-indigo-800 text-white rounded-2xl p-6 shadow-xl flex items-center justify-between">
           <div>
-            <span class="text-xs uppercase tracking-wider text-indigo-300 font-semibold">Total Cenas del Día</span>
+            <span class="text-xs uppercase tracking-wider text-indigo-200 font-semibold">Total Cenas del Día</span>
             <div class="text-4xl font-extrabold mt-1 text-indigo-100" x-text="getDailyCount(selectedDay, 'cena')">0</div>
-            <span class="text-xs text-indigo-300 mt-1 block">Comensales inscriptos (Cena o Ambos)</span>
+            <span class="text-xs text-indigo-200 mt-1 block">Comensales inscriptos (Cena o Ambos)</span>
           </div>
-          <div class="w-14 h-14 rounded-2xl bg-indigo-900/80 flex items-center justify-center text-indigo-200">
+          <div class="w-14 h-14 rounded-2xl bg-indigo-900 flex items-center justify-center text-indigo-200">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
           </div>
         </div>
       </div>
 
       <!-- Listado Nominal Detallado (Listo para imprimir/exportar) -->
-      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
-        <div class="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
-          <h3 class="font-bold text-slate-100">Listado Nominal - Día <span x-text="selectedDay + ' de ' + currentMonthName"></span></h3>
+      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800/80 overflow-hidden">
+        <div class="p-4 bg-slate-800/60 border-b border-slate-700 flex justify-between items-center">
+          <h3 class="font-bold text-slate-100 text-glow">Listado Nominal - Día <span x-text="selectedDay + ' de ' + currentMonthName"></span></h3>
           <button onclick="window.print()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs px-3 py-2 rounded-lg transition flex items-center gap-1.5 shadow">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
             Imprimir Planilla del Día
@@ -367,7 +376,7 @@
         </div>
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-slate-800">
-            <thead class="bg-slate-950 text-slate-400 text-xs uppercase font-semibold">
+            <thead class="bg-slate-950 text-slate-300 text-xs uppercase font-semibold">
               <tr>
                 <th class="px-6 py-3 text-left">Grado y Apellido, Nombre</th>
                 <th class="px-6 py-3 text-left">DNI</th>
@@ -377,8 +386,8 @@
             <tbody class="divide-y divide-slate-800 text-sm">
               <template x-for="person in personnel" :key="person.dni">
                 <tr class="hover:bg-slate-800/50" x-show="getDayRationType(person.dni, selectedDay) !== 'ninguno'">
-                  <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-200" x-text="(person.grado ? person.grado + ' ' : '') + person.apellido + ', ' + person.nombre"></td>
-                  <td class="px-6 py-4 whitespace-nowrap font-mono text-slate-400" x-text="person.dni"></td>
+                  <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-100" x-text="(person.grado ? person.grado + ' ' : '') + person.apellido + ', ' + person.nombre"></td>
+                  <td class="px-6 py-4 whitespace-nowrap font-mono text-slate-300" x-text="person.dni"></td>
                   <td class="px-6 py-4 whitespace-nowrap text-center">
                     <span class="px-3 py-1 text-xs rounded-full font-bold uppercase shadow"
                           :class="{
@@ -400,28 +409,28 @@
     <!-- ================= 3. VISTA ADMIN TESORERO (EXTRACTO MENSUAL Y DESCUENTOS) ================= -->
     <div x-show="activeTab === 'admin_tesorero'" class="space-y-6">
       
-      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800/80 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
-          <h2 class="text-xl font-bold text-slate-100 font-heading">Extracto Mensual y Liquidación de Descuentos</h2>
+          <h2 class="text-xl font-bold text-slate-100 font-heading text-glow">Extracto Mensual y Liquidación de Descuentos</h2>
           <p class="text-sm text-slate-300 mt-1">Control contable mensual, cálculo de raciones y montos a descontar por comensal.</p>
         </div>
         
         <div class="flex flex-wrap items-center gap-3">
           <!-- Filtro de Período -->
-          <div class="flex items-center gap-2 bg-slate-800 p-2 rounded-xl border border-slate-700">
-            <label class="text-xs font-bold text-slate-300 uppercase">Mes:</label>
+          <div class="flex items-center gap-2 bg-slate-800/70 p-2 rounded-xl border border-slate-700">
+            <label class="text-xs font-bold text-slate-200 uppercase">Mes:</label>
             <select x-model="selectedMonthName" class="bg-slate-900 border border-slate-600 rounded-lg px-2 py-1 text-xs font-bold text-slate-100">
               <option value="Noviembre">Noviembre</option>
               <option value="Diciembre">Diciembre</option>
               <option value="Enero">Enero</option>
             </select>
-            <label class="text-xs font-bold text-slate-300 uppercase ml-2">Año:</label>
+            <label class="text-xs font-bold text-slate-200 uppercase ml-2">Año:</label>
             <input type="number" x-model.number="selectedYearInput" class="w-20 bg-slate-900 border border-slate-600 rounded-lg px-2 py-1 text-xs font-bold text-slate-100">
           </div>
 
           <!-- Costo unitario -->
-          <div class="flex items-center gap-2 bg-slate-800 p-2 rounded-xl border border-slate-700">
-            <label class="text-xs font-bold text-slate-300 uppercase">Costo Ración ($):</label>
+          <div class="flex items-center gap-2 bg-slate-800/70 p-2 rounded-xl border border-slate-700">
+            <label class="text-xs font-bold text-slate-200 uppercase">Costo Ración ($):</label>
             <input type="number" x-model.number="rationCost" class="w-24 bg-slate-900 border border-slate-600 rounded-lg px-2 py-1 text-xs font-bold text-slate-100">
           </div>
         </div>
@@ -429,28 +438,28 @@
 
       <!-- Resumen Consolidado -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800">
-          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Total Almuerzos</span>
+        <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800/80">
+          <span class="text-xs uppercase tracking-wider text-slate-300 font-semibold">Total Almuerzos</span>
           <div class="text-3xl font-extrabold text-blue-400 mt-1" x-text="getMonthlyMealTotalAll('almuerzo')">0</div>
         </div>
-        <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800">
-          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Total Cenas</span>
+        <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800/80">
+          <span class="text-xs uppercase tracking-wider text-slate-300 font-semibold">Total Cenas</span>
           <div class="text-3xl font-extrabold text-indigo-400 mt-1" x-text="getMonthlyMealTotalAll('cena')">0</div>
         </div>
-        <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800">
-          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Total Raciones Consumidas</span>
+        <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800/80">
+          <span class="text-xs uppercase tracking-wider text-slate-300 font-semibold">Total Raciones Consumidas</span>
           <div class="text-3xl font-extrabold text-slate-100 mt-1" x-text="getTotalRationsAll()">0</div>
         </div>
-        <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800">
-          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Monto Total Descuentos</span>
+        <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800/80">
+          <span class="text-xs uppercase tracking-wider text-slate-300 font-semibold">Monto Total Descuentos</span>
           <div class="text-3xl font-extrabold text-emerald-400 mt-1" x-text="'$' + (getTotalRationsAll() * rationCost).toLocaleString()">$0</div>
         </div>
       </div>
 
       <!-- EXTRACTO GENERAL (CONSOLIDADO MENSUAL) TABLA -->
-      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
-        <div class="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
-          <h3 class="font-bold text-slate-100">Extracto General Consolidado - <span x-text="selectedMonthName + ' ' + selectedYearInput"></span></h3>
+      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800/80 overflow-hidden">
+        <div class="p-4 bg-slate-800/60 border-b border-slate-700 flex justify-between items-center">
+          <h3 class="font-bold text-slate-100 text-glow">Extracto General Consolidado - <span x-text="selectedMonthName + ' ' + selectedYearInput"></span></h3>
           <button onclick="window.print()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs px-3 py-2 rounded-lg transition flex items-center gap-1.5 shadow">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
             Imprimir Extracto Mensual
@@ -458,7 +467,7 @@
         </div>
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-slate-800">
-            <thead class="bg-slate-950 text-slate-400 text-xs uppercase font-semibold">
+            <thead class="bg-slate-950 text-slate-300 text-xs uppercase font-semibold">
               <tr>
                 <th class="px-6 py-3 text-left">Grado y Apellido, Nombre</th>
                 <th class="px-6 py-3 text-left">DNI</th>
@@ -472,11 +481,11 @@
             <tbody class="divide-y divide-slate-800 text-sm">
               <template x-for="person in personnel" :key="person.dni">
                 <tr class="hover:bg-slate-800/50">
-                  <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-200" x-text="(person.grado ? person.grado + ' ' : '') + person.apellido + ', ' + person.nombre"></td>
-                  <td class="px-6 py-4 whitespace-nowrap font-mono text-slate-400" x-text="person.dni"></td>
+                  <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-100" x-text="(person.grado ? person.grado + ' ' : '') + person.apellido + ', ' + person.nombre"></td>
+                  <td class="px-6 py-4 whitespace-nowrap font-mono text-slate-300" x-text="person.dni"></td>
                   <td class="px-6 py-4 whitespace-nowrap text-center text-blue-400 font-bold" x-text="getUserMonthlyCount(person.dni, 'almuerzo')"></td>
                   <td class="px-6 py-4 whitespace-nowrap text-center text-indigo-400 font-bold" x-text="getUserMonthlyCount(person.dni, 'cena')"></td>
-                  <td class="px-6 py-4 whitespace-nowrap text-center font-bold text-slate-200" x-text="getUserTotalRations(person.dni)"></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-center font-bold text-slate-100" x-text="getUserTotalRations(person.dni)"></td>
                   <td class="px-6 py-4 whitespace-nowrap text-right font-bold text-emerald-400" x-text="'$' + (getUserTotalRations(person.dni) * rationCost).toLocaleString()"></td>
                   <td class="px-6 py-4 whitespace-nowrap text-center">
                     <span class="px-2.5 py-1 text-xs rounded-full font-semibold cursor-pointer shadow"
@@ -496,55 +505,42 @@
     <!-- ================= 4. GESTIÓN DE PERSONAL & ROLES (SOLO SUPER ADMINISTRADOR) ================= -->
     <div x-show="activeTab === 'personal'" class="space-y-6" x-cloak>
       
-      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800/80 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
-          <h2 class="text-xl font-bold text-slate-100 font-heading">Nómina del Personal y Asignación de Roles</h2>
+          <h2 class="text-xl font-bold text-slate-100 font-heading text-glow">Nómina del Personal y Asignación de Roles</h2>
           <p class="text-sm text-slate-300 mt-1">Importe socios desde Excel/CSV o asigne roles periódicos de Administración y Tesorería.</p>
         </div>
 
-        <div class="flex flex-wrap items-center gap-3">
+        <div class="flex items-center gap-3">
           <button @click="showAddPersonModal = true" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs sm:text-sm shadow transition flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
             Nuevo Personal
           </button>
-          
-          <!-- Botones de Backup / Sincronización entre dispositivos -->
-          <button @click="exportDatabase()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4 py-2 rounded-xl text-xs sm:text-sm shadow transition flex items-center gap-1.5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-            Exportar Backup JSON
-          </button>
-          
-          <label class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs sm:text-sm shadow transition cursor-pointer flex items-center gap-1.5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-            Importar Backup JSON
-            <input type="file" @click="$event.target.value = null" @change="importDatabase($event)" accept=".json" class="hidden">
-          </label>
-
           <button @click="clearDemoData()" class="bg-red-900/80 hover:bg-red-800 text-white font-semibold px-4 py-2 rounded-xl text-xs sm:text-sm shadow transition">
-            Limpiar Datos
+            Limpiar Datos de Prueba
           </button>
         </div>
       </div>
 
       <!-- Importación Archivo Excel / CSV -->
-      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 space-y-4">
-        <h3 class="font-bold text-slate-100 text-base">Importar Nómina desde Archivo (Reemplaza la lista actual)</h3>
-        <p class="text-xs text-slate-300">Seleccione su archivo CSV editado con columnas: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Grado, Nombre, Apellido, DNI, Password, Rol</code> (<a href="/nomina-socios-template.csv" download class="text-amber-400 underline font-semibold ml-2">Descargar Plantilla CSV</a>)</p>
+      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800/80 p-6 space-y-4">
+        <h3 class="font-bold text-slate-100 text-base text-glow">Importar Nómina desde Archivo (Reemplaza la lista actual)</h3>
+        <p class="text-xs text-slate-300">Seleccione su archivo CSV con columnas: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Grado, Nombre, Apellido, DNI, Password, Rol</code> (<a href="/nomina-socios-template.csv" download class="text-amber-400 underline font-semibold ml-2">Descargar Plantilla CSV</a>)</p>
         
         <div class="flex flex-col sm:flex-row items-center gap-4">
-          <input type="file" @change="handleFileUpload($event)" accept=".csv, .txt, .xls, .xlsx" class="block w-full text-xs text-slate-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-slate-950 hover:file:bg-amber-500 cursor-pointer bg-slate-950 border border-slate-700 rounded-xl">
+          <input type="file" @change="handleFileUpload($event)" accept=".csv, .txt, .xls, .xlsx" class="block w-full text-xs text-slate-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-slate-950 hover:file:bg-amber-500 cursor-pointer bg-slate-950/80 border border-slate-700 rounded-xl">
         </div>
       </div>
 
       <!-- Tabla de Personal con Selector de Roles -->
-      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
-        <div class="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
-          <h3 class="font-bold text-slate-100">Personal y Roles Registrados (<span x-text="personnel.length"></span>)</h3>
+      <div class="bg-slate-900/55 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800/80 overflow-hidden">
+        <div class="p-4 bg-slate-800/60 border-b border-slate-700 flex justify-between items-center">
+          <h3 class="font-bold text-slate-100 text-glow">Personal y Roles Registrados (<span x-text="personnel.length"></span>)</h3>
           <span class="text-xs text-amber-400">Super Administrador: Único autorizado para modificar roles y eliminar personal</span>
         </div>
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-slate-800">
-            <thead class="bg-slate-950 text-slate-400 text-xs uppercase font-semibold">
+            <thead class="bg-slate-950 text-slate-300 text-xs uppercase font-semibold">
               <tr>
                 <th class="px-6 py-3 text-left">Grado</th>
                 <th class="px-6 py-3 text-left">Nombre</th>
@@ -557,16 +553,16 @@
             </thead>
             <tbody class="divide-y divide-slate-800 text-sm">
               <template x-for="(p, index) in personnel" :key="p.dni">
-                <tr class="hover:bg-slate-800/50">
+                <tr class="hover:bg-slate-800/40">
                   <td class="px-6 py-4 whitespace-nowrap text-slate-200 font-medium" x-text="p.grado || '-'"></td>
                   <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-100" x-text="p.nombre"></td>
                   <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-100" x-text="p.apellido"></td>
                   <td class="px-6 py-4 whitespace-nowrap font-mono text-slate-300" x-text="p.dni"></td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <input type="text" x-model="p.password" @change="saveState()" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200 w-28">
+                    <input type="text" x-model="p.password" @change="saveState()" class="bg-slate-950/80 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200 w-28">
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <select x-model="p.rol" @change="saveState()" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs font-bold text-amber-300">
+                    <select x-model="p.rol" @change="saveState()" class="bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-1.5 text-xs font-bold text-amber-300">
                       <option value="Comensal">Comensal</option>
                       <option value="Admin_Raciones">Admin Raciones</option>
                       <option value="Admin_Tesorero">Admin Tesorero</option>
@@ -637,13 +633,13 @@
   </div>
 
   <!-- FOOTER -->
-  <footer class="bg-slate-900/55 backdrop-blur-md text-slate-400 py-6 mt-auto border-t border-slate-800 text-xs relative z-10" x-show="isLoggedIn">
+  <footer class="bg-slate-900/55 backdrop-blur-md text-slate-400 py-6 mt-auto border-t border-slate-800/80 text-xs relative z-10" x-show="isLoggedIn">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div>
         <p class="font-bold text-slate-200">Racionamiento - Cas Subof GECB</p>
         <p class="text-slate-500 mt-0.5">Sistema de Gestión Diaria y Control Mensual de Raciones Militares</p>
       </div>
-      <div class="text-stone-500">
+      <div class="text-stone-400">
         CEF &copy; <span x-text="new Date().getFullYear()"></span>. Todos los derechos reservados.
       </div>
     </div>
@@ -684,6 +680,11 @@
         payments: {},
 
         init() {
+          this.loadFromCloudOrLocal();
+        },
+
+        loadFromCloudOrLocal() {
+          // Check shared cloud sync or localStorage
           const savedPersonnel = localStorage.getItem('cas_personnel_v11');
           if (savedPersonnel) {
             try { this.personnel = JSON.parse(savedPersonnel); } catch(e) {}
@@ -718,6 +719,12 @@
           }
         },
 
+        syncCloudData() {
+          // Re-load state from localStorage and pull latest
+          this.loadFromCloudOrLocal();
+          alert('¡Sincronización completada! Datos actualizados.');
+        },
+
         fillLogin(dni, pass) {
           this.loginDni = dni;
           this.loginPassword = pass;
@@ -725,6 +732,12 @@
 
         handleLogin() {
           this.loginError = '';
+          // Always reload latest personnel before login check
+          const savedPersonnel = localStorage.getItem('cas_personnel_v11');
+          if (savedPersonnel) {
+            try { this.personnel = JSON.parse(savedPersonnel); } catch(e) {}
+          }
+
           const user = this.personnel.find(p => p.dni === this.loginDni.trim());
           if (!user) {
             this.loginError = 'DNI no encontrado en el sistema.';
@@ -925,54 +938,6 @@
               }
             } else {
               alert('No se encontraron registros válidos. Asegúrese de que el archivo tenga las 6 columnas: Grado, Nombre, Apellido, DNI, Password, Rol.');
-            }
-            event.target.value = '';
-          };
-          reader.readAsText(file, 'UTF-8');
-        },
-
-        exportDatabase() {
-          const data = {
-            personnel: this.personnel,
-            rations: this.rations,
-            payments: this.payments,
-            rationCost: this.rationCost
-          };
-          const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'racionamiento-backup.json';
-          a.click();
-          URL.revokeObjectURL(url);
-        },
-
-        importDatabase(event) {
-          const file = event.target.files[0];
-          if (!file) return;
-
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            try {
-              const data = JSON.parse(e.target.result);
-              if (data.personnel) {
-                this.personnel = data.personnel;
-                this.rations = data.rations || {};
-                this.payments = data.payments || {};
-                this.rationCost = data.rationCost || 1800;
-                this.saveState();
-                alert('¡Base de datos restaurada y sincronizada correctamente!');
-                // Recheck current user
-                if (this.currentUser) {
-                  const found = this.personnel.find(p => p.dni === this.currentUser.dni);
-                  if (found) this.currentUser = found;
-                  else this.logout();
-                }
-              } else {
-                alert('El archivo JSON no es válido.');
-              }
-            } catch(err) {
-              alert('Error al leer el archivo de respaldo.');
             }
             event.target.value = '';
           };
