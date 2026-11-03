@@ -92,7 +92,7 @@
         <div class="text-left">
           <div class="text-xs text-slate-400">Bienvenido/a,</div>
           <div class="text-sm font-bold text-amber-300 flex items-center gap-2">
-            <span x-text="(currentUser?.nombre || '') + ' ' + (currentUser?.apellido || '')"></span>
+            <span x-text="(currentUser?.grado ? currentUser.grado + ' ' : '') + (currentUser?.nombre || '') + ' ' + (currentUser?.apellido || '')"></span>
             <span class="px-2 py-0.5 text-[10px] rounded uppercase font-semibold tracking-wider"
                   :class="{
                     'bg-amber-500 text-slate-950 font-bold': currentUser?.rol === 'Super_Admin',
@@ -116,7 +116,7 @@
     </div>
   </header>
 
-  <!-- NAVIGATION TABS (Sin simulador de hora) -->
+  <!-- NAVIGATION TABS -->
   <nav class="bg-slate-900/90 backdrop-blur-md text-slate-200 shadow border-b border-slate-800 relative z-10" x-show="isLoggedIn">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-2 py-2">
       <div class="flex items-center space-x-1 sm:space-x-3 overflow-x-auto">
@@ -369,18 +369,16 @@
           <table class="min-w-full divide-y divide-slate-800">
             <thead class="bg-slate-950 text-slate-400 text-xs uppercase font-semibold">
               <tr>
+                <th class="px-6 py-3 text-left">Grado y Apellido, Nombre</th>
                 <th class="px-6 py-3 text-left">DNI</th>
-                <th class="px-6 py-3 text-left">Apellido</th>
-                <th class="px-6 py-3 text-left">Nombre</th>
                 <th class="px-6 py-3 text-center">Ración Seleccionada</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-800 text-sm">
               <template x-for="person in personnel" :key="person.dni">
                 <tr class="hover:bg-slate-800/50" x-show="getDayRationType(person.dni, selectedDay) !== 'ninguno'">
+                  <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-200" x-text="(person.grado ? person.grado + ' ' : '') + person.apellido + ', ' + person.nombre"></td>
                   <td class="px-6 py-4 whitespace-nowrap font-mono text-slate-400" x-text="person.dni"></td>
-                  <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-200" x-text="person.apellido"></td>
-                  <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-200" x-text="person.nombre"></td>
                   <td class="px-6 py-4 whitespace-nowrap text-center">
                     <span class="px-3 py-1 text-xs rounded-full font-bold uppercase shadow"
                           :class="{
@@ -462,8 +460,8 @@
           <table class="min-w-full divide-y divide-slate-800">
             <thead class="bg-slate-950 text-slate-400 text-xs uppercase font-semibold">
               <tr>
+                <th class="px-6 py-3 text-left">Grado y Apellido, Nombre</th>
                 <th class="px-6 py-3 text-left">DNI</th>
-                <th class="px-6 py-3 text-left">Apellido y Nombre</th>
                 <th class="px-6 py-3 text-center">Almuerzos</th>
                 <th class="px-6 py-3 text-center">Cenas</th>
                 <th class="px-6 py-3 text-center">Total Raciones</th>
@@ -474,8 +472,8 @@
             <tbody class="divide-y divide-slate-800 text-sm">
               <template x-for="person in personnel" :key="person.dni">
                 <tr class="hover:bg-slate-800/50">
+                  <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-200" x-text="(person.grado ? person.grado + ' ' : '') + person.apellido + ', ' + person.nombre"></td>
                   <td class="px-6 py-4 whitespace-nowrap font-mono text-slate-400" x-text="person.dni"></td>
-                  <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-200" x-text="person.apellido + ', ' + person.nombre"></td>
                   <td class="px-6 py-4 whitespace-nowrap text-center text-blue-400 font-bold" x-text="getUserMonthlyCount(person.dni, 'almuerzo')"></td>
                   <td class="px-6 py-4 whitespace-nowrap text-center text-indigo-400 font-bold" x-text="getUserMonthlyCount(person.dni, 'cena')"></td>
                   <td class="px-6 py-4 whitespace-nowrap text-center font-bold text-slate-200" x-text="getUserTotalRations(person.dni)"></td>
@@ -518,7 +516,7 @@
       <!-- Importación Archivo Excel / CSV -->
       <div class="bg-slate-900/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 space-y-4">
         <h3 class="font-bold text-slate-100 text-base">Importar Nómina desde Archivo (Excel / CSV)</h3>
-        <p class="text-xs text-slate-400">Seleccione un archivo CSV o Excel exportado con las columnas: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Nombre, Apellido, DNI, Password, Rol</code></p>
+        <p class="text-xs text-slate-400">Seleccione un archivo CSV o Excel con columnas: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Grado, Nombre, Apellido, DNI, Password, Rol</code> (<a href="/nomina-socios-template.csv" download class="text-amber-400 underline font-semibold ml-2">Descargar Plantilla CSV</a>)</p>
         
         <div class="flex flex-col sm:flex-row items-center gap-4">
           <input type="file" @change="handleFileUpload($event)" accept=".csv, .txt, .xls, .xlsx" class="block w-full text-xs text-slate-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-slate-950 hover:file:bg-amber-500 cursor-pointer bg-slate-950 border border-slate-700 rounded-xl">
@@ -535,9 +533,10 @@
           <table class="min-w-full divide-y divide-slate-800">
             <thead class="bg-slate-950 text-slate-400 text-xs uppercase font-semibold">
               <tr>
-                <th class="px-6 py-3 text-left">DNI</th>
+                <th class="px-6 py-3 text-left">Grado</th>
                 <th class="px-6 py-3 text-left">Nombre</th>
                 <th class="px-6 py-3 text-left">Apellido</th>
+                <th class="px-6 py-3 text-left">DNI</th>
                 <th class="px-6 py-3 text-left">Contraseña</th>
                 <th class="px-6 py-3 text-left">Rol Actual</th>
                 <th class="px-6 py-3 text-center">Acciones</th>
@@ -546,9 +545,10 @@
             <tbody class="divide-y divide-slate-800 text-sm">
               <template x-for="(p, index) in personnel" :key="p.dni">
                 <tr class="hover:bg-slate-800/50">
-                  <td class="px-6 py-4 whitespace-nowrap font-mono text-slate-400" x-text="p.dni"></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-slate-300 font-medium" x-text="p.grado || '-'"></td>
                   <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-200" x-text="p.nombre"></td>
                   <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-200" x-text="p.apellido"></td>
+                  <td class="px-6 py-4 whitespace-nowrap font-mono text-slate-400" x-text="p.dni"></td>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <input type="text" x-model="p.password" @change="saveState()" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 w-28">
                   </td>
@@ -585,6 +585,10 @@
       </div>
 
       <form @submit.prevent="addNewPerson" class="space-y-4 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Grado</label>
+          <input type="text" x-model="newPerson.grado" placeholder="Ej: Sargento Primero" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:ring-2 focus:ring-amber-500">
+        </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Nombre</label>
           <input type="text" x-model="newPerson.nombre" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:ring-2 focus:ring-amber-500">
@@ -652,42 +656,41 @@
         selectedYearInput: 2026,
         selectedDay: 3,
         currentSystemDay: 3,
-        simulatedHour: 9,
         rationCost: 1800,
         
         currentUser: null,
 
         personnel: [
-          { nombre: 'CEF', apellido: 'Administrador', dni: '32849488', password: 'Bocha1986', rol: 'Super_Admin' },
-          { nombre: 'Juan', apellido: 'Perez', dni: '12345678', password: '12345678', rol: 'Comensal' },
-          { nombre: 'Maria', apellido: 'Gomez', dni: '12345679', password: '12345679', rol: 'Admin_Raciones' },
-          { nombre: 'Carlos', apellido: 'Rossi', dni: '123456780', password: '123456780', rol: 'Admin_Tesorero' }
+          { grado: 'Teniente Coronel', nombre: 'CEF', apellido: 'Administrador', dni: '32849488', password: 'Bocha1986', rol: 'Super_Admin' },
+          { grado: 'Sargento Primero', nombre: 'Juan', apellido: 'Perez', dni: '12345678', password: '12345678', rol: 'Comensal' },
+          { grado: 'Cabo Primero', nombre: 'Maria', apellido: 'Gomez', dni: '12345679', password: '12345679', rol: 'Admin_Raciones' },
+          { grado: 'Suboficial Mayor', nombre: 'Carlos', apellido: 'Rossi', dni: '123456780', password: '123456780', rol: 'Admin_Tesorero' }
         ],
 
         rations: {},
         payments: {},
 
         init() {
-          const savedPersonnel = localStorage.getItem('cas_personnel_v8');
+          const savedPersonnel = localStorage.getItem('cas_personnel_v9');
           if (savedPersonnel) {
             try { this.personnel = JSON.parse(savedPersonnel); } catch(e) {}
           } else {
             this.seedSampleRations();
           }
 
-          const savedRations = localStorage.getItem('cas_rations_v8');
+          const savedRations = localStorage.getItem('cas_rations_v9');
           if (savedRations) {
             try { this.rations = JSON.parse(savedRations); } catch(e) {}
           } else {
             this.seedSampleRations();
           }
 
-          const savedPayments = localStorage.getItem('cas_payments_v8');
+          const savedPayments = localStorage.getItem('cas_payments_v9');
           if (savedPayments) {
             try { this.payments = JSON.parse(savedPayments); } catch(e) {}
           }
 
-          const savedCost = localStorage.getItem('cas_ration_cost_v8');
+          const savedCost = localStorage.getItem('cas_ration_cost_v9');
           if (savedCost) {
             this.rationCost = Number(savedCost);
           }
@@ -748,7 +751,7 @@
             this.rations = {};
             this.payments = {};
             this.personnel = [
-              { nombre: 'CEF', apellido: 'Administrador', dni: '32849488', password: 'Bocha1986', rol: 'Super_Admin' }
+              { grado: 'Teniente Coronel', nombre: 'CEF', apellido: 'Administrador', dni: '32849488', password: 'Bocha1986', rol: 'Super_Admin' }
             ];
             this.saveState();
             alert('Datos limpiados. Ahora solo queda el Super Administrador (CEF).');
@@ -756,10 +759,10 @@
         },
 
         saveState() {
-          localStorage.setItem('cas_personnel_v8', JSON.stringify(this.personnel));
-          localStorage.setItem('cas_rations_v8', JSON.stringify(this.rations));
-          localStorage.setItem('cas_payments_v8', JSON.stringify(this.payments));
-          localStorage.setItem('cas_ration_cost_v8', this.rationCost);
+          localStorage.setItem('cas_personnel_v9', JSON.stringify(this.personnel));
+          localStorage.setItem('cas_rations_v9', JSON.stringify(this.rations));
+          localStorage.setItem('cas_payments_v9', JSON.stringify(this.payments));
+          localStorage.setItem('cas_ration_cost_v9', this.rationCost);
           if (this.currentUser) {
             const updated = this.personnel.find(p => p.dni === this.currentUser.dni);
             if (updated) this.currentUser = updated;
@@ -775,7 +778,6 @@
         },
 
         isTodayLocked() {
-          // Real-time hour check (10:00 AM)
           const currentHour = new Date().getHours();
           return currentHour >= 10;
         },
@@ -857,12 +859,12 @@
           this.saveState();
         },
 
-        newPerson: { nombre: '', apellido: '', dni: '', password: '', rol: 'Comensal' },
+        newPerson: { grado: '', nombre: '', apellido: '', dni: '', password: '', rol: 'Comensal' },
 
         addNewPerson() {
           if (!this.newPerson.nombre || !this.newPerson.apellido || !this.newPerson.dni || !this.newPerson.password) return;
           this.personnel.push({ ...this.newPerson });
-          this.newPerson = { nombre: '', apellido: '', dni: '', password: '', rol: 'Comensal' };
+          this.newPerson = { grado: '', nombre: '', apellido: '', dni: '', password: '', rol: 'Comensal' };
           this.showAddPersonModal = false;
           this.saveState();
         },
@@ -883,20 +885,20 @@
             const text = e.target.result;
             let lines = text.split('\n');
             let count = 0;
-            lines.forEach(line => {
+            lines.forEach((line, index) => {
+              // Skip header row if it contains 'Grado' or 'DNI'
+              if (index === 0 && (line.toLowerCase().includes('grado') || line.toLowerCase().includes('dni'))) return;
+              
               let parts = line.split(',').map(s => s.trim().replace(/^["']|["']$/g, ''));
-              if (parts.length >= 4) {
-                let [nombre, apellido, dni, password, rol] = parts;
-                if (!rol && parts.length === 4) {
-                  rol = password;
-                  password = dni;
-                }
+              if (parts.length >= 6) {
+                let [grado, nombre, apellido, dni, password, rol] = parts;
                 if (dni && nombre) {
                   let existing = this.personnel.find(p => p.dni === dni);
                   if (!existing) {
                     this.personnel.push({
+                      grado,
                       nombre,
-                      apellido: apellido || '',
+                      apellido,
                       dni,
                       password: password || dni,
                       rol: (rol && rol.match(/Admin_Raciones|Admin_Tesorero|Super_Admin/i)) ? rol : 'Comensal'
@@ -906,7 +908,7 @@
                 }
               }
             });
-            alert(`Se importaron ${count} socios correctamente desde el archivo.`);
+            alert(`Se importaron ${count} socios correctamente desde el archivo de Excel/CSV.`);
             this.saveState();
             event.target.value = '';
           };
