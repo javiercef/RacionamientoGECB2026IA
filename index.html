@@ -160,7 +160,7 @@
 
         <!-- Tab Admin Raciones -->
         <button @click="activeTab = 'admin_raciones'" 
-                x-show="currentUser?.rol === 'Admin_Raciones' || currentUser?.rol === 'Admin_Tesorero' || currentUser?.rol === 'Super_Admin'"
+                x-show="currentUser?.rol === 'Admin_Raciones' || currentUser?.rol === 'Super_Admin'"
                 :class="activeTab === 'admin_raciones' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800 text-slate-300'"
                 class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
@@ -176,13 +176,13 @@
           Extracto Mensual & Descuentos (Tesorero)
         </button>
 
-        <!-- Tab Gestión de Personal -->
+        <!-- Tab Gestión de Personal (SOLO SUPER ADMIN) -->
         <button @click="activeTab = 'personal'" 
-                x-show="currentUser?.rol === 'Admin_Raciones' || currentUser?.rol === 'Admin_Tesorero' || currentUser?.rol === 'Super_Admin'"
+                x-show="currentUser?.rol === 'Super_Admin'"
                 :class="activeTab === 'personal' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800 text-slate-300'"
                 class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-          Nómina & Roles
+          Nómina & Roles (Super Admin)
         </button>
       </div>
 
@@ -534,8 +534,8 @@
 
     </div>
 
-    <!-- ================= 4. GESTIÓN DE PERSONAL & ROLES (SUPER ADMIN) ================= -->
-    <div x-show="activeTab === 'personal'" class="space-y-6">
+    <!-- ================= 4. GESTIÓN DE PERSONAL & ROLES (SOLO SUPER ADMIN) ================= -->
+    <div x-show="activeTab === 'personal'" class="space-y-6" x-cloak>
       
       <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
@@ -557,7 +557,7 @@
       <!-- Importación Excel / CSV Box -->
       <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-6">
         <h3 class="font-bold text-slate-100 text-base mb-2">Importar Nómina de Socios (CSV / Excel)</h3>
-        <p class="text-xs text-slate-400 mb-4">Pegue los datos con las columnas: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Nombre, Apellido, DNI, Password, Rol</code> (Roles permitidos: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Comensal</code>, <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Admin_Raciones</code>, <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Admin_Tesorero</code>).</p>
+        <p class="text-xs text-slate-400 mb-4">Pegue los datos con las columnas: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Nombre, Apellido, DNI, Password, Rol</code> (Roles permitidos: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-slate-800 font-mono">Comensal</code>, <code class="bg-slate-800 px-1.5 py-0.5 rounded text-slate-800 font-mono">Admin_Raciones</code>, <code class="bg-slate-800 px-1.5 py-0.5 rounded text-slate-800 font-mono">Admin_Tesorero</code>).</p>
         
         <div class="space-y-4">
           <textarea x-model="csvImportText" rows="4" placeholder="Ej:
@@ -601,7 +601,6 @@ Carlos,Rossi,123456780,123456780,Admin_Tesorero" class="w-full font-mono text-xs
                     <input type="text" x-model="p.password" @change="saveState()" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 w-28">
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <!-- Selector de Rol para Super Admin -->
                     <select x-model="p.rol" @change="saveState()" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs font-bold text-amber-300">
                       <option value="Comensal">Comensal</option>
                       <option value="Admin_Raciones">Admin Raciones</option>
@@ -718,26 +717,26 @@ Carlos,Rossi,123456780,123456780,Admin_Tesorero" class="w-full font-mono text-xs
         payments: {},
 
         init() {
-          const savedPersonnel = localStorage.getItem('cas_personnel_v4');
+          const savedPersonnel = localStorage.getItem('cas_personnel_v5');
           if (savedPersonnel) {
             try { this.personnel = JSON.parse(savedPersonnel); } catch(e) {}
           } else {
             this.seedSampleRations();
           }
 
-          const savedRations = localStorage.getItem('cas_rations_v4');
+          const savedRations = localStorage.getItem('cas_rations_v5');
           if (savedRations) {
             try { this.rations = JSON.parse(savedRations); } catch(e) {}
           } else {
             this.seedSampleRations();
           }
 
-          const savedPayments = localStorage.getItem('cas_payments_v4');
+          const savedPayments = localStorage.getItem('cas_payments_v5');
           if (savedPayments) {
             try { this.payments = JSON.parse(savedPayments); } catch(e) {}
           }
 
-          const savedCost = localStorage.getItem('cas_ration_cost_v4');
+          const savedCost = localStorage.getItem('cas_ration_cost_v5');
           if (savedCost) {
             this.rationCost = Number(savedCost);
           }
@@ -806,10 +805,10 @@ Carlos,Rossi,123456780,123456780,Admin_Tesorero" class="w-full font-mono text-xs
         },
 
         saveState() {
-          localStorage.setItem('cas_personnel_v4', JSON.stringify(this.personnel));
-          localStorage.setItem('cas_rations_v4', JSON.stringify(this.rations));
-          localStorage.setItem('cas_payments_v4', JSON.stringify(this.payments));
-          localStorage.setItem('cas_ration_cost_v4', this.rationCost);
+          localStorage.setItem('cas_personnel_v5', JSON.stringify(this.personnel));
+          localStorage.setItem('cas_rations_v5', JSON.stringify(this.rations));
+          localStorage.setItem('cas_payments_v5', JSON.stringify(this.payments));
+          localStorage.setItem('cas_ration_cost_v5', this.rationCost);
           if (this.currentUser) {
             const updated = this.personnel.find(p => p.dni === this.currentUser.dni);
             if (updated) this.currentUser = updated;
