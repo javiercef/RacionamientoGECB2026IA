@@ -26,8 +26,67 @@
 </head>
 <body class="h-full flex flex-col antialiased text-slate-100 bg-slate-950" x-data="appData()" x-init="init()">
 
+  <!-- ================= PANTALLA DE LOGIN ================= -->
+  <div x-show="!isLoggedIn" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 p-4" x-cloak>
+    <div class="bg-slate-900 rounded-2xl max-w-md w-full p-8 shadow-2xl border border-slate-800 space-y-6">
+      
+      <div class="text-center space-y-2">
+        <div class="w-16 h-16 mx-auto rounded-full bg-slate-950 border-2 border-amber-500 flex items-center justify-center shadow-inner">
+          <svg class="w-9 h-9 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <h2 class="text-xl font-extrabold text-slate-100 font-heading">Racionamiento - Cas Subof GECB</h2>
+        <p class="text-xs text-slate-400">Ingrese su DNI y contraseña para acceder al sistema.</p>
+      </div>
+
+      <form @submit.prevent="handleLogin" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">DNI</label>
+          <input type="text" x-model="loginDni" required placeholder="Ej: 32849488" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:ring-2 focus:ring-amber-500 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Contraseña</label>
+          <input type="password" x-model="loginPassword" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:ring-2 focus:ring-amber-500 text-sm">
+        </div>
+
+        <template x-if="loginError">
+          <p class="text-xs text-red-400 font-semibold text-center" x-text="loginError"></p>
+        </template>
+
+        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold py-2.5 rounded-xl text-sm shadow transition">
+          Ingresar al Sistema
+        </button>
+      </form>
+
+      <!-- Tarjetas de Acceso Rápido para Pruebas -->
+      <div class="pt-4 border-t border-slate-800 space-y-2">
+        <span class="block text-[11px] text-slate-400 uppercase font-semibold text-center">Accesos de Prueba (Click para autocompletar):</span>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <button type="button" @click="fillLogin('32849488', 'Bocha1986')" class="p-2 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-lg text-left transition">
+            <span class="block font-bold text-amber-300">Super Admin</span>
+            <span class="text-[10px] text-slate-400 font-mono">32849488</span>
+          </button>
+          <button type="button" @click="fillLogin('12345678', '12345678')" class="p-2 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-lg text-left transition">
+            <span class="block font-bold text-emerald-300">Comensal</span>
+            <span class="text-[10px] text-slate-400 font-mono">12345678</span>
+          </button>
+          <button type="button" @click="fillLogin('12345679', '12345679')" class="p-2 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-lg text-left transition">
+            <span class="block font-bold text-blue-300">Admin Raciones</span>
+            <span class="text-[10px] text-slate-400 font-mono">12345679</span>
+          </button>
+          <button type="button" @click="fillLogin('123456780', '123456780')" class="p-2 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-lg text-left transition">
+            <span class="block font-bold text-amber-400">Tesorero</span>
+            <span class="text-[10px] text-slate-400 font-mono">123456780</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- HEADER -->
-  <header class="military-gradient text-white shadow-xl border-b border-slate-800 relative z-30">
+  <header class="military-gradient text-white shadow-xl border-b border-slate-800 relative z-30" x-show="isLoggedIn">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
       
       <!-- IZQUIERDA: Escudo del Ejército Argentino -->
@@ -44,26 +103,27 @@
       </div>
 
       <!-- CENTRO: Identidad de Usuario Autenticado -->
-      <div class="bg-slate-900/80 backdrop-blur-sm px-5 py-2 rounded-xl border border-slate-700 text-center flex items-center gap-3">
+      <div class="bg-slate-900/80 backdrop-blur-sm px-5 py-2 rounded-xl border border-slate-700 text-center flex items-center gap-3" x-show="currentUser">
         <div class="w-9 h-9 rounded-full bg-amber-600 text-slate-950 font-bold flex items-center justify-center text-sm shadow">
-          <span x-text="currentUser.nombre.charAt(0) + currentUser.apellido.charAt(0)"></span>
+          <span x-text="(currentUser?.nombre || '').charAt(0) + (currentUser?.apellido || '').charAt(0)"></span>
         </div>
         <div class="text-left">
           <div class="text-xs text-slate-400">Bienvenido/a,</div>
           <div class="text-sm font-bold text-amber-300 flex items-center gap-2">
-            <span x-text="currentUser.nombre + ' ' + currentUser.apellido"></span>
+            <span x-text="(currentUser?.nombre || '') + ' ' + (currentUser?.apellido || '')"></span>
             <span class="px-2 py-0.5 text-[10px] rounded uppercase font-semibold tracking-wider"
                   :class="{
-                    'bg-emerald-600 text-slate-950 font-bold': currentUser.rol === 'Comensal',
-                    'bg-blue-600 text-white': currentUser.rol === 'Admin_Raciones',
-                    'bg-amber-600 text-slate-950 font-bold': currentUser.rol === 'Admin_Tesorero'
+                    'bg-amber-500 text-slate-950 font-bold': currentUser?.rol === 'Super_Admin',
+                    'bg-emerald-600 text-slate-950 font-bold': currentUser?.rol === 'Comensal',
+                    'bg-blue-600 text-white': currentUser?.rol === 'Admin_Raciones',
+                    'bg-amber-600 text-slate-950 font-bold': currentUser?.rol === 'Admin_Tesorero'
                   }"
-                  x-text="currentUser.rol.replace('_', ' ')"></span>
+                  x-text="(currentUser?.rol || '').replace('_', ' ')"></span>
           </div>
         </div>
       </div>
 
-      <!-- DERECHA: Escudo de la Unidad + Selector de Rol rápido -->
+      <!-- DERECHA: Escudo de la Unidad + Botón Logout -->
       <div class="flex items-center gap-4">
         <div class="hidden lg:flex items-center gap-3 text-right">
           <div>
@@ -77,10 +137,9 @@
           </div>
         </div>
 
-        <!-- Botón Cambiar Usuario -->
-        <button @click="showUserModal = true" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs transition shadow flex items-center gap-1.5">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-          Cambiar Usuario / Rol
+        <button @click="logout()" class="bg-red-700 hover:bg-red-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition shadow flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+          Salir
         </button>
       </div>
 
@@ -88,7 +147,7 @@
   </header>
 
   <!-- NAVIGATION TABS & TIME SIMULATOR BAR -->
-  <nav class="bg-slate-900 text-slate-200 shadow border-b border-slate-800">
+  <nav class="bg-slate-900 text-slate-200 shadow border-b border-slate-800" x-show="isLoggedIn">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-2 py-2">
       <div class="flex items-center space-x-1 sm:space-x-3 overflow-x-auto">
         <!-- Tab Comensal -->
@@ -101,7 +160,7 @@
 
         <!-- Tab Admin Raciones -->
         <button @click="activeTab = 'admin_raciones'" 
-                x-show="currentUser.rol === 'Admin_Raciones' || currentUser.rol === 'Admin_Tesorero'"
+                x-show="currentUser?.rol === 'Admin_Raciones' || currentUser?.rol === 'Admin_Tesorero' || currentUser?.rol === 'Super_Admin'"
                 :class="activeTab === 'admin_raciones' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800 text-slate-300'"
                 class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
@@ -110,7 +169,7 @@
 
         <!-- Tab Admin Tesorero -->
         <button @click="activeTab = 'admin_tesorero'" 
-                x-show="currentUser.rol === 'Admin_Tesorero'"
+                x-show="currentUser?.rol === 'Admin_Tesorero' || currentUser?.rol === 'Super_Admin'"
                 :class="activeTab === 'admin_tesorero' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800 text-slate-300'"
                 class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -119,11 +178,11 @@
 
         <!-- Tab Gestión de Personal -->
         <button @click="activeTab = 'personal'" 
-                x-show="currentUser.rol === 'Admin_Raciones' || currentUser.rol === 'Admin_Tesorero'"
+                x-show="currentUser?.rol === 'Admin_Raciones' || currentUser?.rol === 'Admin_Tesorero' || currentUser?.rol === 'Super_Admin'"
                 :class="activeTab === 'personal' ? 'bg-amber-600 text-slate-950 font-bold shadow' : 'hover:bg-slate-800 text-slate-300'"
                 class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-          Nómina & Personal
+          Nómina & Roles
         </button>
       </div>
 
@@ -139,7 +198,7 @@
   </nav>
 
   <!-- MAIN CONTENT CONTAINER -->
-  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6" x-show="isLoggedIn">
 
     <!-- ================= 1. VISTA COMENSAL ================= -->
     <div x-show="activeTab === 'comensal'" class="space-y-6">
@@ -153,11 +212,11 @@
         <div class="flex items-center gap-3">
           <div class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-center">
             <span class="block text-xs text-amber-400 font-semibold uppercase">Total Raciones Mes</span>
-            <span class="text-2xl font-extrabold text-amber-300" x-text="getUserTotalRations(currentUser.dni)">0</span>
+            <span class="text-2xl font-extrabold text-amber-300" x-text="getUserTotalRations(currentUser?.dni)">0</span>
           </div>
           <div class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-center">
             <span class="block text-xs text-emerald-400 font-semibold uppercase">Costo Estimado</span>
-            <span class="text-2xl font-extrabold text-emerald-300" x-text="'$' + (getUserTotalRations(currentUser.dni) * rationCost).toLocaleString()">$0</span>
+            <span class="text-2xl font-extrabold text-emerald-300" x-text="'$' + (getUserTotalRations(currentUser?.dni) * rationCost).toLocaleString()">$0</span>
           </div>
         </div>
       </div>
@@ -193,7 +252,6 @@
 
           <!-- Días del Mes (Grid 7 columnas) -->
           <div class="grid grid-cols-7 gap-2">
-            <!-- Padding empty cells for Nov 2026 (Nov 1 is Sunday, so 0 offset) -->
             <template x-for="day in getDaysInCurrentMonth()" :key="day">
               <div @click="openDayModal(day)" 
                    class="min-h-[100px] rounded-xl p-3 border transition cursor-pointer flex flex-col justify-between relative group"
@@ -208,18 +266,18 @@
                 </div>
 
                 <!-- Estado de la ración en el día -->
-                <div class="my-auto text-center">
-                  <template x-if="getDayRationType(currentUser.dni, day) === 'ninguno'">
+                <div class="my-auto text-center" x-show="currentUser">
+                  <template x-if="getDayRationType(currentUser?.dni, day) === 'ninguno'">
                     <span class="text-[11px] text-slate-500 italic">Sin ración</span>
                   </template>
-                  <template x-if="getDayRationType(currentUser.dni, day) !== 'ninguno'">
+                  <template x-if="getDayRationType(currentUser?.dni, day) !== 'ninguno'">
                     <span class="inline-block px-2 py-1 text-[11px] rounded-lg font-bold uppercase shadow"
                           :class="{
-                            'bg-blue-900/80 text-blue-200 border border-blue-700': getDayRationType(currentUser.dni, day) === 'almuerzo',
-                            'bg-indigo-900/80 text-indigo-200 border border-indigo-700': getDayRationType(currentUser.dni, day) === 'cena',
-                            'bg-emerald-900/80 text-emerald-200 border border-emerald-700': getDayRationType(currentUser.dni, day) === 'ambos'
+                            'bg-blue-900/80 text-blue-200 border border-blue-700': getDayRationType(currentUser?.dni, day) === 'almuerzo',
+                            'bg-indigo-900/80 text-indigo-200 border border-indigo-700': getDayRationType(currentUser?.dni, day) === 'cena',
+                            'bg-emerald-900/80 text-emerald-200 border border-emerald-700': getDayRationType(currentUser?.dni, day) === 'ambos'
                           }"
-                          x-text="getDayRationType(currentUser.dni, day)"></span>
+                          x-text="getDayRationType(currentUser?.dni, day)"></span>
                   </template>
                 </div>
 
@@ -476,46 +534,50 @@
 
     </div>
 
-    <!-- ================= 4. GESTIÓN DE PERSONAL & EXCEL/CSV IMPORT ================= -->
+    <!-- ================= 4. GESTIÓN DE PERSONAL & ROLES (SUPER ADMIN) ================= -->
     <div x-show="activeTab === 'personal'" class="space-y-6">
       
       <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
-          <h2 class="text-xl font-bold text-slate-100 font-heading">Nómina del Personal e Importación</h2>
-          <p class="text-sm text-slate-400 mt-1">Gestione el personal de la unidad o importe la nómina desde un archivo Excel/CSV.</p>
+          <h2 class="text-xl font-bold text-slate-100 font-heading">Nómina del Personal y Asignación de Roles</h2>
+          <p class="text-sm text-slate-400 mt-1">Importe socios desde Excel/CSV o asigne roles periódicos de Administración y Tesorería.</p>
         </div>
 
         <div class="flex items-center gap-3">
           <button @click="showAddPersonModal = true" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs sm:text-sm shadow transition flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
-            Nuevo Comensal
+            Nuevo Personal
+          </button>
+          <button @click="clearDemoData()" class="bg-red-900/80 hover:bg-red-800 text-white font-semibold px-4 py-2 rounded-xl text-xs sm:text-sm shadow transition">
+            Limpiar Datos de Prueba
           </button>
         </div>
       </div>
 
       <!-- Importación Excel / CSV Box -->
       <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-6">
-        <h3 class="font-bold text-slate-100 text-base mb-2">Importar Nómina (Formato CSV / Excel)</h3>
-        <p class="text-xs text-slate-400 mb-4">Pegue los datos con las columnas: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Nombre, Apellido, DNI, Rol</code> (Roles: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Comensal</code>, <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Admin_Raciones</code>, <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Admin_Tesorero</code>).</p>
+        <h3 class="font-bold text-slate-100 text-base mb-2">Importar Nómina de Socios (CSV / Excel)</h3>
+        <p class="text-xs text-slate-400 mb-4">Pegue los datos con las columnas: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Nombre, Apellido, DNI, Password, Rol</code> (Roles permitidos: <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Comensal</code>, <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Admin_Raciones</code>, <code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono">Admin_Tesorero</code>).</p>
         
         <div class="space-y-4">
           <textarea x-model="csvImportText" rows="4" placeholder="Ej:
-Juan,Perez,30987654,Comensal
-Maria,Gomez,28456789,Admin_Raciones
-Carlos,Rossi,25123456,Admin_Tesorero" class="w-full font-mono text-xs p-3 border border-slate-700 rounded-xl bg-slate-950 text-slate-200 focus:ring-2 focus:ring-amber-500"></textarea>
+Juan,Perez,12345678,12345678,Comensal
+Maria,Gomez,12345679,12345679,Admin_Raciones
+Carlos,Rossi,123456780,123456780,Admin_Tesorero" class="w-full font-mono text-xs p-3 border border-slate-700 rounded-xl bg-slate-950 text-slate-200 focus:ring-2 focus:ring-amber-500"></textarea>
           
           <div class="flex justify-end gap-3">
             <button @click="importCsvData()" class="bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold px-4 py-2 rounded-xl text-xs transition shadow">
-              Importar Datos
+              Importar Nómina
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Tabla de Personal Actual -->
+      <!-- Tabla de Personal con Selector de Roles -->
       <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
-        <div class="p-4 bg-slate-800/80 border-b border-slate-700">
-          <h3 class="font-bold text-slate-100">Personal Registrado (<span x-text="personnel.length"></span>)</h3>
+        <div class="p-4 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
+          <h3 class="font-bold text-slate-100">Personal y Roles Registrados (<span x-text="personnel.length"></span>)</h3>
+          <span class="text-xs text-amber-400">Super Administrador: Puede modificar roles y contraseñas periódicamente</span>
         </div>
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-slate-800">
@@ -524,7 +586,8 @@ Carlos,Rossi,25123456,Admin_Tesorero" class="w-full font-mono text-xs p-3 border
                 <th class="px-6 py-3 text-left">DNI</th>
                 <th class="px-6 py-3 text-left">Nombre</th>
                 <th class="px-6 py-3 text-left">Apellido</th>
-                <th class="px-6 py-3 text-left">Rol</th>
+                <th class="px-6 py-3 text-left">Contraseña</th>
+                <th class="px-6 py-3 text-left">Rol Actual</th>
                 <th class="px-6 py-3 text-center">Acciones</th>
               </tr>
             </thead>
@@ -535,13 +598,16 @@ Carlos,Rossi,25123456,Admin_Tesorero" class="w-full font-mono text-xs p-3 border
                   <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-200" x-text="p.nombre"></td>
                   <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-200" x-text="p.apellido"></td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2.5 py-1 text-xs rounded font-semibold"
-                          :class="{
-                            'bg-emerald-950 text-emerald-300 border border-emerald-700': p.rol === 'Comensal',
-                            'bg-blue-950 text-blue-300 border border-blue-700': p.rol === 'Admin_Raciones',
-                            'bg-amber-950 text-amber-300 border border-amber-700': p.rol === 'Admin_Tesorero'
-                          }"
-                          x-text="p.rol.replace('_', ' ')"></span>
+                    <input type="text" x-model="p.password" @change="saveState()" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 w-28">
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <!-- Selector de Rol para Super Admin -->
+                    <select x-model="p.rol" @change="saveState()" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs font-bold text-amber-300">
+                      <option value="Comensal">Comensal</option>
+                      <option value="Admin_Raciones">Admin Raciones</option>
+                      <option value="Admin_Tesorero">Admin Tesorero</option>
+                      <option value="Super_Admin">Super Admin</option>
+                    </select>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-center">
                     <button @click="deletePerson(index)" class="text-red-400 hover:text-red-300 font-semibold text-xs px-2.5 py-1 rounded bg-red-950/60 hover:bg-red-900 transition">
@@ -559,43 +625,7 @@ Carlos,Rossi,25123456,Admin_Tesorero" class="w-full font-mono text-xs p-3 border
 
   </main>
 
-  <!-- MODAL: CAMBIAR USUARIO / ROL -->
-  <div x-show="showUserModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4" x-cloak>
-    <div class="bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-700 space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="text-lg font-bold text-slate-100 font-heading">Seleccionar Usuario Activo (Demostración)</h3>
-        <button @click="showUserModal = false" class="text-slate-400 hover:text-slate-200 font-bold">&times;</button>
-      </div>
-
-      <p class="text-xs text-slate-400">Seleccione el perfil para probar las distintas vistas (Comensal, Admin Raciones, Tesorero).</p>
-
-      <div class="space-y-2 max-h-64 overflow-y-auto">
-        <template x-for="p in personnel" :key="p.dni">
-          <div @click="currentUser = p; showUserModal = false" 
-               class="p-3 rounded-xl border cursor-pointer transition flex items-center justify-between"
-               :class="currentUser.dni === p.dni ? 'bg-amber-950/40 border-amber-500 shadow-sm' : 'bg-slate-800 hover:bg-slate-750 border-slate-700'">
-            <div>
-              <div class="font-bold text-sm text-slate-100" x-text="p.apellido + ', ' + p.nombre"></div>
-              <div class="text-xs text-slate-400 font-mono">DNI: <span x-text="p.dni"></span></div>
-            </div>
-            <span class="px-2.5 py-1 text-xs rounded font-semibold"
-                  :class="{
-                    'bg-emerald-950 text-emerald-300 border border-emerald-700': p.rol === 'Comensal',
-                    'bg-blue-950 text-blue-300 border border-blue-700': p.rol === 'Admin_Raciones',
-                    'bg-amber-950 text-amber-300 border border-amber-700': p.rol === 'Admin_Tesorero'
-                  }"
-                  x-text="p.rol.replace('_', ' ')"></span>
-          </div>
-        </template>
-      </div>
-
-      <div class="flex justify-end pt-3 border-t border-slate-800">
-        <button @click="showUserModal = false" class="bg-slate-800 text-slate-200 px-4 py-2 rounded-xl text-xs font-semibold hover:bg-slate-700">Cerrar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: NUEVO PERSONAJE -->
+  <!-- MODAL: NUEVO PERSONAL -->
   <div x-show="showAddPersonModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4" x-cloak>
     <div class="bg-slate-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-700 space-y-4">
       <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -617,11 +647,16 @@ Carlos,Rossi,25123456,Admin_Tesorero" class="w-full font-mono text-xs p-3 border
           <input type="text" x-model="newPerson.dni" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:ring-2 focus:ring-amber-500">
         </div>
         <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Contraseña</label>
+          <input type="text" x-model="newPerson.password" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:ring-2 focus:ring-amber-500">
+        </div>
+        <div>
           <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Rol</label>
           <select x-model="newPerson.rol" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:ring-2 focus:ring-amber-500">
             <option value="Comensal">Comensal</option>
             <option value="Admin_Raciones">Admin Raciones</option>
             <option value="Admin_Tesorero">Admin Tesorero</option>
+            <option value="Super_Admin">Super Admin</option>
           </select>
         </div>
 
@@ -634,7 +669,7 @@ Carlos,Rossi,25123456,Admin_Tesorero" class="w-full font-mono text-xs p-3 border
   </div>
 
   <!-- FOOTER -->
-  <footer class="bg-slate-900 text-slate-400 py-6 mt-auto border-t border-slate-800 text-xs">
+  <footer class="bg-slate-900 text-slate-400 py-6 mt-auto border-t border-slate-800 text-xs" x-show="isLoggedIn">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div>
         <p class="font-bold text-slate-200">Racionamiento - Cas Subof GECB</p>
@@ -650,8 +685,12 @@ Carlos,Rossi,25123456,Admin_Tesorero" class="w-full font-mono text-xs p-3 border
   <script>
     function appData() {
       return {
+        isLoggedIn: false,
+        loginDni: '',
+        loginPassword: '',
+        loginError: '',
+
         activeTab: 'comensal',
-        showUserModal: false,
         showAddPersonModal: false,
         showDayModal: false,
         modalDay: 1,
@@ -662,55 +701,85 @@ Carlos,Rossi,25123456,Admin_Tesorero" class="w-full font-mono text-xs p-3 border
         selectedYearInput: 2026,
         selectedDay: 3,
         currentSystemDay: 3,
-        simulatedHour: 9, // 9:00 AM allows editing today, 11:00 AM locks today
+        simulatedHour: 9,
         rationCost: 1800,
         csvImportText: '',
         
-        currentUser: {
-          nombre: 'Juan',
-          apellido: 'Perez',
-          dni: '30987654',
-          rol: 'Comensal'
-        },
+        currentUser: null,
 
         personnel: [
-          { nombre: 'Juan', apellido: 'Perez', dni: '30987654', rol: 'Comensal' },
-          { nombre: 'Maria', apellido: 'Gomez', dni: '28456789', rol: 'Admin_Raciones' },
-          { nombre: 'Carlos', apellido: 'Rossi', dni: '25123456', rol: 'Admin_Tesorero' },
-          { nombre: 'Esteban', apellido: 'Silva', dni: '33444555', rol: 'Comensal' },
-          { nombre: 'Lucia', apellido: 'Benitez', dni: '41222333', rol: 'Comensal' }
+          { nombre: 'Super', apellido: 'Administrador', dni: '32849488', password: 'Bocha1986', rol: 'Super_Admin' },
+          { nombre: 'Juan', apellido: 'Perez', dni: '12345678', password: '12345678', rol: 'Comensal' },
+          { nombre: 'Maria', apellido: 'Gomez', dni: '12345679', password: '12345679', rol: 'Admin_Raciones' },
+          { nombre: 'Carlos', apellido: 'Rossi', dni: '123456780', password: '123456780', rol: 'Admin_Tesorero' }
         ],
 
-        // Rations storage: { "dni_day": "ninguno" | "almuerzo" | "cena" | "ambos" }
         rations: {},
-        payments: {}, // { "dni": true/false }
+        payments: {},
 
         init() {
-          const savedPersonnel = localStorage.getItem('cas_personnel_v3');
+          const savedPersonnel = localStorage.getItem('cas_personnel_v4');
           if (savedPersonnel) {
             try { this.personnel = JSON.parse(savedPersonnel); } catch(e) {}
+          } else {
+            this.seedSampleRations();
           }
 
-          const savedRations = localStorage.getItem('cas_rations_v3');
+          const savedRations = localStorage.getItem('cas_rations_v4');
           if (savedRations) {
             try { this.rations = JSON.parse(savedRations); } catch(e) {}
           } else {
             this.seedSampleRations();
           }
 
-          const savedPayments = localStorage.getItem('cas_payments_v3');
+          const savedPayments = localStorage.getItem('cas_payments_v4');
           if (savedPayments) {
             try { this.payments = JSON.parse(savedPayments); } catch(e) {}
           }
 
-          const savedCost = localStorage.getItem('cas_ration_cost_v3');
+          const savedCost = localStorage.getItem('cas_ration_cost_v4');
           if (savedCost) {
             this.rationCost = Number(savedCost);
           }
 
-          if (!this.currentUser && this.personnel.length > 0) {
-            this.currentUser = this.personnel[0];
+          const activeDni = localStorage.getItem('cas_active_dni');
+          if (activeDni) {
+            const found = this.personnel.find(p => p.dni === activeDni);
+            if (found) {
+              this.currentUser = found;
+              this.isLoggedIn = true;
+            }
           }
+        },
+
+        fillLogin(dni, pass) {
+          this.loginDni = dni;
+          this.loginPassword = pass;
+        },
+
+        handleLogin() {
+          this.loginError = '';
+          const user = this.personnel.find(p => p.dni === this.loginDni.trim());
+          if (!user) {
+            this.loginError = 'DNI no encontrado en el sistema.';
+            return;
+          }
+          if (user.password !== this.loginPassword.trim()) {
+            this.loginError = 'Contraseña incorrecta.';
+            return;
+          }
+
+          this.currentUser = user;
+          this.isLoggedIn = true;
+          localStorage.setItem('cas_active_dni', user.dni);
+        },
+
+        logout() {
+          this.isLoggedIn = false;
+          this.currentUser = null;
+          localStorage.removeItem('cas_active_dni');
+          this.loginDni = '';
+          this.loginPassword = '';
         },
 
         seedSampleRations() {
@@ -724,11 +793,27 @@ Carlos,Rossi,25123456,Admin_Tesorero" class="w-full font-mono text-xs p-3 border
           this.saveState();
         },
 
+        clearDemoData() {
+          if (confirm('¿Está seguro de limpiar todos los datos de prueba y dejar la nómina vacía?')) {
+            this.rations = {};
+            this.payments = {};
+            this.personnel = [
+              { nombre: 'Super', apellido: 'Administrador', dni: '32849488', password: 'Bocha1986', rol: 'Super_Admin' }
+            ];
+            this.saveState();
+            alert('Datos limpiados. Ahora solo queda el Super Administrador.');
+          }
+        },
+
         saveState() {
-          localStorage.setItem('cas_personnel_v3', JSON.stringify(this.personnel));
-          localStorage.setItem('cas_rations_v3', JSON.stringify(this.rations));
-          localStorage.setItem('cas_payments_v3', JSON.stringify(this.payments));
-          localStorage.setItem('cas_ration_cost_v3', this.rationCost);
+          localStorage.setItem('cas_personnel_v4', JSON.stringify(this.personnel));
+          localStorage.setItem('cas_rations_v4', JSON.stringify(this.rations));
+          localStorage.setItem('cas_payments_v4', JSON.stringify(this.payments));
+          localStorage.setItem('cas_ration_cost_v4', this.rationCost);
+          if (this.currentUser) {
+            const updated = this.personnel.find(p => p.dni === this.currentUser.dni);
+            if (updated) this.currentUser = updated;
+          }
         },
 
         getDaysInCurrentMonth() {
@@ -820,12 +905,12 @@ Carlos,Rossi,25123456,Admin_Tesorero" class="w-full font-mono text-xs p-3 border
           this.saveState();
         },
 
-        newPerson: { nombre: '', apellido: '', dni: '', rol: 'Comensal' },
+        newPerson: { nombre: '', apellido: '', dni: '', password: '', rol: 'Comensal' },
 
         addNewPerson() {
-          if (!this.newPerson.nombre || !this.newPerson.apellido || !this.newPerson.dni) return;
+          if (!this.newPerson.nombre || !this.newPerson.apellido || !this.newPerson.dni || !this.newPerson.password) return;
           this.personnel.push({ ...this.newPerson });
-          this.newPerson = { nombre: '', apellido: '', dni: '', rol: 'Comensal' };
+          this.newPerson = { nombre: '', apellido: '', dni: '', password: '', rol: 'Comensal' };
           this.showAddPersonModal = false;
           this.saveState();
         },
@@ -843,11 +928,11 @@ Carlos,Rossi,25123456,Admin_Tesorero" class="w-full font-mono text-xs p-3 border
           let count = 0;
           lines.forEach(line => {
             let parts = line.split(',').map(s => s.trim());
-            if (parts.length >= 4) {
-              let [nombre, apellido, dni, rol] = parts;
+            if (parts.length >= 5) {
+              let [nombre, apellido, dni, password, rol] = parts;
               let existing = this.personnel.find(p => p.dni === dni);
               if (!existing) {
-                this.personnel.push({ nombre, apellido, dni, rol: rol || 'Comensal' });
+                this.personnel.push({ nombre, apellido, dni, password, rol: rol || 'Comensal' });
                 count++;
               }
             }
